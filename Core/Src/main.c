@@ -138,7 +138,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    //Ethans comment
+    //Ethan's comment
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
