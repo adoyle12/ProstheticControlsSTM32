@@ -32,6 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define SERVO_Motor1    0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -86,7 +87,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  SERVO_Init(SERVO_Motor1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -94,7 +95,10 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+      SERVO_MoveTo(SERVO_Motor1, 0);
+      HAL_Delay(2000);
+      SERVO_MoveTo(SERVO_Motor1, 180);
+      HAL_Delay(2000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

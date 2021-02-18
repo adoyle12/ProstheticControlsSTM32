@@ -12,7 +12,7 @@
 
 #include "SERVO.h"
 
-const SERVO_CfgType SERVO_CfgParam[SERVO_NUM] =
+const SERVO_CfgType SERVO_CfgParam[1] =
 {
 	// Servo Motor 1 Configurations
     {
