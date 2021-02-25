@@ -12,7 +12,7 @@
 
 #include "SERVO.h"
 
-const SERVO_CfgType SERVO_CfgParam[1] =
+const SERVO_CfgType SERVO_CfgParam[SERVO_NUM] =
 {
 	// Servo Motor 1 Configurations
     {
@@ -22,7 +22,8 @@ const SERVO_CfgType SERVO_CfgParam[1] =
 		&TIM2->CCR1,
 		TIM_CHANNEL_1,
 		72000000,
-		0.65,
-		2.3
+		0.5,
+		2.5
 	}
+
 };

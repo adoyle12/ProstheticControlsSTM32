@@ -157,16 +157,16 @@ void SERVO_Sweep(uint16_t au16_SERVO_Instance)
 
 	SERVO_MoveTo(au16_SERVO_Instance, 0);
 
-	DWT_Delay_ms(250);
+    HAL_Delay(250);
 	while(au8_Angle < 180)
 	{
 		SERVO_MoveTo(au16_SERVO_Instance, au8_Angle++);
-		DWT_Delay_ms(5);
+        HAL_Delay(5);
 	}
-	DWT_Delay_ms(250);
+    HAL_Delay(250);
 	while(au8_Angle > 0)
 	{
 		SERVO_MoveTo(au16_SERVO_Instance, au8_Angle--);
-		DWT_Delay_ms(5);
+        HAL_Delay(5);
 	}
 }
