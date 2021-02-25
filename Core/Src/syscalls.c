@@ -111,7 +111,6 @@ int _write(int file, char *data, int len)
     return (status == HAL_OK ? len : 0);
 }
 
-
 /* USER CODE END 1 */
 
 int _close(int file)
