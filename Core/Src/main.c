@@ -43,7 +43,8 @@
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
-TIM_HandleTypeDef htim4;
+
+UART_HandleTypeDef huart4;
 
 /* USER CODE BEGIN PV */
 
@@ -54,7 +55,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
-static void MX_TIM4_Init(void);
+static void MX_UART4_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -93,41 +94,44 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_UART4_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
-  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+  //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-
+  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int x = 20;
   int up = 1;
-  int min =50;
+  int min = 50;
   int max = 110;
   int delay = 5;
 
-    while (1)
-  {
-      /**** SERVO 1***/
+    SERVO_Init(0);
+    SERVO_Init(1);
+    SERVO_Init(2);
+    SERVO_Init(3);
+    SERVO_Init(4);
+
+    while (1) {
+       HAL_Delay(2000);
+        /**** SERVO 1***/
       for (int i=max;i>min; i--) {
 
-          htim1.Instance->CCR1 = i;
+          SERVO_RawMove(0,i);
           HAL_Delay(delay);
       }
 
       for (int i=min;i<max; i++) {
 
-          htim1.Instance->CCR1 = i;
+          SERVO_RawMove(0,i);
           HAL_Delay(delay);
       }
       /***************/
@@ -135,13 +139,13 @@ int main(void)
       /**** SERVO 2***/
       for (int i=max;i>min; i--) {
 
-          htim1.Instance->CCR2 = i;
+          SERVO_RawMove(1,i);
           HAL_Delay(delay);
       }
 
       for (int i=min;i<max; i++) {
 
-          htim1.Instance->CCR2 = i;
+          SERVO_RawMove(1,i);
           HAL_Delay(delay);
       }
       /***************/
@@ -149,13 +153,13 @@ int main(void)
       /**** SERVO 3***/
       for (int i=max;i>min; i--) {
 
-          htim1.Instance->CCR3 = i;
+          SERVO_RawMove(2,i);
           HAL_Delay(delay);
       }
 
       for (int i=min;i<max; i++) {
 
-          htim1.Instance->CCR3 = i;
+          SERVO_RawMove(2,i);
           HAL_Delay(delay);
       }
       /***************/
@@ -163,13 +167,13 @@ int main(void)
       /**** SERVO 4***/
       for (int i=max;i>min; i--) {
 
-          htim2.Instance->CCR1 = i;
+          SERVO_RawMove(3,i);
           HAL_Delay(delay);
       }
 
       for (int i=min;i<max; i++) {
 
-          htim2.Instance->CCR1 = i;
+          SERVO_RawMove(3,i);
           HAL_Delay(delay);
       }
       /***************/
@@ -177,13 +181,13 @@ int main(void)
       /**** SERVO 5***/
       for (int i=max;i>min; i--) {
 
-          htim2.Instance->CCR2 = i;
+          SERVO_RawMove(4,i);
           HAL_Delay(delay);
       }
 
       for (int i=min;i<max; i++) {
 
-          htim2.Instance->CCR2 = i;
+          SERVO_RawMove(4,i);
           HAL_Delay(delay);
       }
       /*************/
@@ -192,21 +196,21 @@ int main(void)
 
       for (int i=max;i>min; i--) {
 
-          htim1.Instance->CCR1 = i;
-          htim1.Instance->CCR2 = i;
-          htim1.Instance->CCR3 = i;
-          htim2.Instance->CCR1 = i;
-          htim2.Instance->CCR2 = i;
+          SERVO_RawMove(0,i);
+          SERVO_RawMove(1,i);
+          SERVO_RawMove(2,i);
+          SERVO_RawMove(3,i);
+          SERVO_RawMove(4,i);
           HAL_Delay(delay);
       }
 
       for (int i=min;i<max; i++) {
 
-          htim1.Instance->CCR1 = i;
-          htim1.Instance->CCR2 = i;
-          htim1.Instance->CCR3 = i;
-          htim2.Instance->CCR1 = i;
-          htim2.Instance->CCR2 = i;
+          SERVO_RawMove(0,i);
+          SERVO_RawMove(1,i);
+          SERVO_RawMove(2,i);
+          SERVO_RawMove(3,i);
+          SERVO_RawMove(4,i);
           HAL_Delay(delay);
       }
 
@@ -217,6 +221,7 @@ int main(void)
   /* USER CODE END 3 */
 }
 
+
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -225,6 +230,7 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Configure the main internal regulator output voltage
   */
@@ -259,6 +265,14 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  /** Initializes the peripherals clocks
+  */
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_UART4;
+  PeriphClkInit.Uart4ClockSelection = RCC_UART4CLKSOURCE_PCLK1;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /**
@@ -281,9 +295,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 900-1;
+  htim1.Init.Prescaler = 1000-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 999;
+  htim1.Init.Period = 899;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -398,51 +412,50 @@ static void MX_TIM2_Init(void)
 }
 
 /**
-  * @brief TIM4 Initialization Function
+  * @brief UART4 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_TIM4_Init(void)
+static void MX_UART4_Init(void)
 {
 
-  /* USER CODE BEGIN TIM4_Init 0 */
+  /* USER CODE BEGIN UART4_Init 0 */
 
-  /* USER CODE END TIM4_Init 0 */
+  /* USER CODE END UART4_Init 0 */
 
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
+  /* USER CODE BEGIN UART4_Init 1 */
 
-  /* USER CODE BEGIN TIM4_Init 1 */
-
-  /* USER CODE END TIM4_Init 1 */
-  htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 1000-1;
-  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 899;
-  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)
+  /* USER CODE END UART4_Init 1 */
+  huart4.Instance = UART4;
+  huart4.Init.BaudRate = 115200;
+  huart4.Init.WordLength = UART_WORDLENGTH_8B;
+  huart4.Init.StopBits = UART_STOPBITS_1;
+  huart4.Init.Parity = UART_PARITY_NONE;
+  huart4.Init.Mode = UART_MODE_TX_RX;
+  huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart4.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart4.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart4.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart4) != HAL_OK)
   {
     Error_Handler();
   }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart4, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
   {
     Error_Handler();
   }
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart4, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN TIM4_Init 2 */
+  if (HAL_UARTEx_DisableFifoMode(&huart4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN UART4_Init 2 */
 
-  /* USER CODE END TIM4_Init 2 */
-  HAL_TIM_MspPostInit(&htim4);
+  /* USER CODE END UART4_Init 2 */
 
 }
 

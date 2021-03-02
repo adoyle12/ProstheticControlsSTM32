@@ -16,14 +16,47 @@ const SERVO_CfgType SERVO_CfgParam[SERVO_NUM] =
 {
 	// Servo Motor 1 Configurations
     {
-	    GPIOA,
-		GPIO_PIN_0,
-		TIM2,
-		&TIM2->CCR1,
+		&htim1,
+		&TIM1->CCR1,
 		TIM_CHANNEL_1,
-		72000000,
 		0.5,
 		2.5
-	}
+	},
+
+    // Servo Motor 2 Configurations
+    {
+        &htim1,
+        &TIM1->CCR2,
+        TIM_CHANNEL_2,
+        0.5,
+        2.5
+    },
+
+    // Servo Motor 3 Configurations
+    {
+        &htim1,
+        &TIM1->CCR3,
+        TIM_CHANNEL_3,
+        0.5,
+        2.5
+    },
+
+    // Servo Motor 4 Configurations
+    {
+        &htim2,
+        &TIM2->CCR1,
+        TIM_CHANNEL_1,
+        0.5,
+        2.5
+    },
+
+    // Servo Motor 5 Configurations
+    {
+        &htim2,
+        &TIM2->CCR2,
+        TIM_CHANNEL_2,
+        0.5,
+        2.5
+    }
 
 };
