@@ -66,17 +66,8 @@ void _exit (int status)
 	while (1) {}		/* Make sure we hang here */
 }
 
-__attribute__((weak)) int _read(int file, char *ptr, int len)
-{
-	int DataIdx;
 
-	for (DataIdx = 0; DataIdx < len; DataIdx++)
-	{
-		*ptr++ = __io_getchar();
-	}
 
-return len;
-}
 
 //__attribute__((weak)) int _write(int file, char *ptr, int len)
 //{
@@ -93,8 +84,21 @@ return len;
 #include  <errno.h>
 #include  <sys/unistd.h> // STDOUT_FILENO, STDERR_FILENO
 #include <stm32g4xx_hal.h>
-
 extern UART_HandleTypeDef huart4;
+
+int _read (int file, char *ptr, int len)
+{
+    HAL_UART_Receive(&huart4,(uint8_t*)ptr++,1,0xffff);
+    HAL_UART_Transmit(&huart4,(uint8_t *)(ptr-1),1,10);
+    if (*(ptr-1)==0x0D){
+        HAL_UART_Transmit(&huart4,(uint8_t *)"\n",1,10);
+        *(ptr-1)="\n";
+    }
+
+    return 1;
+}
+
+
 int _write(int file, char *data, int len)
 {
     if ((file != STDOUT_FILENO) && (file != STDERR_FILENO))

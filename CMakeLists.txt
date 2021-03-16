@@ -47,7 +47,6 @@ else ()
 endif ()
 
 include_directories(Core/Inc Drivers/STM32G4xx_HAL_Driver/Inc Drivers/STM32G4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32G4xx/Include Drivers/CMSIS/Include)
-
 include_directories(Core/util Core/SERVO)
 
 add_definitions(-DUSE_HAL_DRIVER -DSTM32G474xx -DDEBUG)

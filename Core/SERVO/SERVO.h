@@ -14,11 +14,12 @@
 #define SERVO_H_
 
 #define HAL_TIM_MODULE_ENABLED
-
+#include "stdio.h"
 #include "stm32g4xx_hal.h"
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
+
 // The Number OF Servo Motors To Be Used In The Project
 #define SERVO_NUM  5
 

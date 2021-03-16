@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include "SERVO.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,9 +45,9 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart4;
 
 /* USER CODE BEGIN PV */
@@ -60,13 +61,126 @@ static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_UART4_Init(void);
 /* USER CODE BEGIN PFP */
+static void Run_Servos_Concurrent(void);
+static void Run_Servos_Consecutive(void);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-/**** SERVO 1***/
 
+static void Run_Servos_Consecutive(void){
+
+    int up = 1;
+    int min = 50;
+    int max = 110;
+    int delay = 5;
+
+
+    HAL_Delay(2000);
+    /**** SERVO 1***/
+    for (int i=max;i>min; i--) {
+
+        SERVO_RawMove(0,i);
+        HAL_Delay(delay);
+    }
+
+    for (int i=min;i<max; i++) {
+
+        SERVO_RawMove(0,i);
+        HAL_Delay(delay);
+    }
+    /***************/
+
+    /**** SERVO 2***/
+    for (int i=max;i>min; i--) {
+
+        SERVO_RawMove(1,i);
+        HAL_Delay(delay);
+    }
+
+    for (int i=min;i<max; i++) {
+
+        SERVO_RawMove(1,i);
+        HAL_Delay(delay);
+    }
+    /***************/
+
+    /**** SERVO 3***/
+    for (int i=max;i>min; i--) {
+
+        SERVO_RawMove(2,i);
+        HAL_Delay(delay);
+    }
+
+    for (int i=min;i<max; i++) {
+
+        SERVO_RawMove(2,i);
+        HAL_Delay(delay);
+    }
+    /***************/
+
+    /**** SERVO 4***/
+    for (int i=max;i>min; i--) {
+
+        SERVO_RawMove(3,i);
+        HAL_Delay(delay);
+    }
+
+    for (int i=min;i<max; i++) {
+
+        SERVO_RawMove(3,i);
+        HAL_Delay(delay);
+    }
+    /***************/
+
+    /**** SERVO 5***/
+    for (int i=max;i>min; i--) {
+
+        SERVO_RawMove(4,i);
+        HAL_Delay(delay);
+    }
+
+    for (int i=min;i<max; i++) {
+
+        SERVO_RawMove(4,i);
+        HAL_Delay(delay);
+    }
+    /*************/
+    HAL_Delay(3000);
+    /**** ALL SERVOS***/
+
+
+}
+
+static void Run_Servos_Concurrent(void){
+
+    int up = 1;
+    int min = 50;
+    int max = 110;
+    int delay = 5;
+
+    for (int i=max;i>min; i--) {
+
+        SERVO_RawMove(0,i);
+        SERVO_RawMove(1,i);
+        SERVO_RawMove(2,i);
+        SERVO_RawMove(3,i);
+        SERVO_RawMove(4,i);
+        HAL_Delay(delay);
+    }
+
+    for (int i=min;i<max; i++) {
+
+        SERVO_RawMove(0,i);
+        SERVO_RawMove(1,i);
+        SERVO_RawMove(2,i);
+        SERVO_RawMove(3,i);
+        SERVO_RawMove(4,i);
+        HAL_Delay(delay);
+    }
+
+}
 /* USER CODE END 0 */
 
 /**
@@ -97,10 +211,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_UART4_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
-
+  MX_UART4_Init();
   /* USER CODE BEGIN 2 */
   //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
@@ -114,121 +227,31 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  while (1)
-  {
-      printf("h\n\r");
-  int up = 1;
-  int min = 50;
-  int max = 110;
-  int delay = 5;
+  char s1[8];
+  printf("\r\n\nBegin Main Code\n\n\n\n\r");
+  printf("\r");
+  HAL_UART_Receive(&huart4,(uint8_t*)s1,8,0xffff);
+  printf("%s\n\r\n",s1);
 
-    SERVO_Init(0);
-    SERVO_Init(1);
-    SERVO_Init(2);
-    SERVO_Init(3);
-    SERVO_Init(4);
+
+
+  SERVO_Init(0);
+  SERVO_Init(1);
+  SERVO_Init(2);
+  SERVO_Init(3);
+  SERVO_Init(4);
+  printf("\n\r\n");
+
 
     while (1) {
-       HAL_Delay(2000);
-        /**** SERVO 1***/
-      for (int i=max;i>min; i--) {
-
-          SERVO_RawMove(0,i);
-          HAL_Delay(delay);
-      }
-
-      for (int i=min;i<max; i++) {
-
-          SERVO_RawMove(0,i);
-          HAL_Delay(delay);
-      }
-      /***************/
-
-      /**** SERVO 2***/
-      for (int i=max;i>min; i--) {
-
-          SERVO_RawMove(1,i);
-          HAL_Delay(delay);
-      }
-
-      for (int i=min;i<max; i++) {
-
-          SERVO_RawMove(1,i);
-          HAL_Delay(delay);
-      }
-      /***************/
-
-      /**** SERVO 3***/
-      for (int i=max;i>min; i--) {
-
-          SERVO_RawMove(2,i);
-          HAL_Delay(delay);
-      }
-
-      for (int i=min;i<max; i++) {
-
-          SERVO_RawMove(2,i);
-          HAL_Delay(delay);
-      }
-      /***************/
-
-      /**** SERVO 4***/
-      for (int i=max;i>min; i--) {
-
-          SERVO_RawMove(3,i);
-          HAL_Delay(delay);
-      }
-
-      for (int i=min;i<max; i++) {
-
-          SERVO_RawMove(3,i);
-          HAL_Delay(delay);
-      }
-      /***************/
-
-      /**** SERVO 5***/
-      for (int i=max;i>min; i--) {
-
-          SERVO_RawMove(4,i);
-          HAL_Delay(delay);
-      }
-
-      for (int i=min;i<max; i++) {
-
-          SERVO_RawMove(4,i);
-          HAL_Delay(delay);
-      }
-      /*************/
-      HAL_Delay(3000);
-      /**** ALL SERVOS***/
-
-      for (int i=max;i>min; i--) {
-
-          SERVO_RawMove(0,i);
-          SERVO_RawMove(1,i);
-          SERVO_RawMove(2,i);
-          SERVO_RawMove(3,i);
-          SERVO_RawMove(4,i);
-          HAL_Delay(delay);
-      }
-
-      for (int i=min;i<max; i++) {
-
-          SERVO_RawMove(0,i);
-          SERVO_RawMove(1,i);
-          SERVO_RawMove(2,i);
-          SERVO_RawMove(3,i);
-          SERVO_RawMove(4,i);
-          HAL_Delay(delay);
-      }
-      
+//TODO: Create logic to switch servo output based on input
+      //  Run_Servos_Consecutive();
+      // Run_Servos_Concurrent();
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
-
 
 /**
   * @brief System Clock Configuration
@@ -281,62 +304,6 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the peripherals clocks
-  */
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_UART4;
-  PeriphClkInit.Uart4ClockSelection = RCC_UART4CLKSOURCE_PCLK1;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-  {
-    Error_Handler();
-  }
-}
-
-/**
-  * @brief UART4 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_UART4_Init(void)
-{
-
-  /* USER CODE BEGIN UART4_Init 0 */
-
-  /* USER CODE END UART4_Init 0 */
-
-  /* USER CODE BEGIN UART4_Init 1 */
-
-  /* USER CODE END UART4_Init 1 */
-  huart4.Instance = UART4;
-  huart4.Init.BaudRate = 115200;
-  huart4.Init.WordLength = UART_WORDLENGTH_8B;
-  huart4.Init.StopBits = UART_STOPBITS_1;
-  huart4.Init.Parity = UART_PARITY_NONE;
-  huart4.Init.Mode = UART_MODE_TX_RX;
-  huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart4.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart4.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart4.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart4) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetTxFifoThreshold(&huart4, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(&huart4, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_DisableFifoMode(&huart4) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN UART4_Init 2 */
-
-  /* USER CODE END UART4_Init 2 */
-
 }
 
 /**
@@ -347,23 +314,9 @@ static void MX_UART4_Init(void)
 static void MX_TIM1_Init(void)
 {
 
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin : PA0 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
   /* USER CODE BEGIN TIM1_Init 0 */
 
   /* USER CODE END TIM1_Init 0 */
-
 
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
@@ -373,9 +326,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 1000-1;
+  htim1.Init.Prescaler = 900-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 899;
+  htim1.Init.Period = 999;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -434,7 +387,6 @@ static void MX_TIM1_Init(void)
   HAL_TIM_MspPostInit(&htim1);
 
 }
-
 
 /**
   * @brief TIM2 Initialization Function
@@ -555,6 +507,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
