@@ -24,6 +24,8 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "SERVO.h"
+#include "string.h"
+#include "stdlib.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,6 +65,9 @@ static void MX_UART4_Init(void);
 /* USER CODE BEGIN PFP */
 static void Run_Servos_Concurrent(void);
 static void Run_Servos_Consecutive(void);
+static void Handle_Command(void);
+static unsigned char getServos(char[]);
+static float getPos(char[]);
 
 /* USER CODE END PFP */
 
@@ -181,6 +186,70 @@ static void Run_Servos_Concurrent(void){
     }
 
 }
+
+static void Handle_Command(void){
+
+    char buffer[8] = "";
+
+    //wait for command
+    printf("Waiting For Command\r\n");
+    HAL_UART_Receive(&huart4, (uint8_t *)buffer, 8, 0xffff);
+    printf("\r\n");
+
+    //check command
+    if(strstr(buffer, "sspos") != NULL){
+        int angle = atoi(buffer);
+        SERVO_MoveTo(1, angle);
+    }
+    else{
+        printf("Command Not Recognized\r\n");
+    }
+
+}
+
+static unsigned char getServos(char cmd[]){
+    char servoMask = 0b00000;
+
+    if(strchr(cmd, '1') == NULL || strchr(cmd, '0') == NULL){
+        printf("Servo Specifier Not found\n");
+        return servoMask;
+    }
+    char *position_prt = strchr(cmd, '0');
+    if(strchr(cmd, '0') < position_prt){
+        position_prt = strchr(cmd, '0');
+    }
+    int index = position_prt - cmd;
+
+    if(cmd[index] == '1'){
+        servoMask ^= 0b10000;
+    }
+    if(cmd[index+1] == '1'){
+        servoMask ^= 0b01000;
+    }
+    if(cmd[index+2] == '1'){
+        servoMask ^= 0b00100;
+    }
+    if(cmd[index+3] == '1'){
+        servoMask ^= 0b00010;
+    }
+    if(cmd[index+4] == '1'){
+        servoMask ^= 0b00001;
+    }
+
+    return servoMask;
+}
+
+static float getPos(char cmd[]){
+
+    char *position_prt = strchr(cmd, '.');
+    int index = position_prt - cmd;
+
+    char pos[7];
+    memcpy(pos, cmd[index-3], 6);
+    pos[6] = '\0';
+
+    return strtof(pos, NULL);
+}
 /* USER CODE END 0 */
 
 /**
@@ -243,11 +312,15 @@ int main(void)
   printf("\n\r\n");
 
 
-    while (1) {
+  while (1) {
 //TODO: Create logic to switch servo output based on input
-      //  Run_Servos_Consecutive();
+      // Run_Servos_Consecutive();
       // Run_Servos_Concurrent();
+
+      Handle_Command();
+
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

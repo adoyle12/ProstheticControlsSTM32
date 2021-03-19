@@ -98,6 +98,14 @@
                                     <listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32G4xx/Include"/>
                                     									
                                     <listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="/home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/CMSIS/Include"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="/home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/CMSIS/Device/ST/STM32G4xx/Include"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="/home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/STM32G4xx_HAL_Driver/Inc"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="/home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/STM32G4xx_HAL_Driver/Inc/Legacy"/>
                                     								
                                 </option>
                                 								
