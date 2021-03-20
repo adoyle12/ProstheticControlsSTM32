@@ -19,9 +19,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "FreeRTOS.h"
 #include "stdio.h"
 #include "SERVO.h"
 #include "string.h"
@@ -52,6 +54,9 @@ TIM_HandleTypeDef htim2;
 
 UART_HandleTypeDef huart4;
 
+osThreadId defaultTaskHandle;
+osThreadId CommandTaskHandle;
+osMessageQId CommandQueueHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -62,6 +67,9 @@ static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_UART4_Init(void);
+void StartDefaultTask(void const * argument);
+void StartCommandTask(void const * argument);
+
 /* USER CODE BEGIN PFP */
 static void Run_Servos_Concurrent(void);
 static void Run_Servos_Consecutive(void);
@@ -291,37 +299,54 @@ int main(void)
   //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
 
+  char s2[8] = "HELLO\n";
+  char s3[8] = "GOODBYE\n";
+
   /* USER CODE END 2 */
 
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* Create the queue(s) */
+  /* definition and creation of CommandQueue */
+  osMessageQDef(CommandQueue, 20, uint16_t);
+  CommandQueueHandle = osMessageCreate(osMessageQ(CommandQueue), NULL);
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* definition and creation of CommandTask */
+  osThreadDef(CommandTask, StartCommandTask, osPriorityIdle, 0, 128);
+  CommandTaskHandle = osThreadCreate(osThread(CommandTask), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  char s1[8];
-  printf("\r\n\nBegin Main Code\n\n\n\n\r");
-  printf("\r");
-  HAL_UART_Receive(&huart4,(uint8_t*)s1,8,0xffff);
-  printf("%s\n\r\n",s1);
-
-
-
-  SERVO_Init(0);
-  SERVO_Init(1);
-  SERVO_Init(2);
-  SERVO_Init(3);
-  SERVO_Init(4);
-  printf("\n\r\n");
-
-
   while (1) {
-//TODO: Create logic to switch servo output based on input
-      // Run_Servos_Consecutive();
-      // Run_Servos_Concurrent();
 
-      Handle_Command();
-
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
@@ -580,6 +605,58 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void const * argument)
+{
+  /* USER CODE BEGIN 5 */
+  uint16_t s1 = 5;
+  SERVO_Init(0);
+  SERVO_Init(1);
+  SERVO_Init(2);
+  SERVO_Init(3);
+  SERVO_Init(4);
+  /* Infinite loop */
+  for(;;)
+  {
+  xQueueSendToBack( CommandQueueHandle, &s1 , 4);
+  xQueueSendToBack( CommandQueueHandle, &s1, 4);
+    osDelay(1);
+  }
+  /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_StartCommandTask */
+/**
+* @brief Function implementing the CommandTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartCommandTask */
+void StartCommandTask(void const * argument)
+{
+  /* USER CODE BEGIN StartCommandTask */
+    uint16_t ReceivedValue = 0;
+  /* Infinite loop */
+  for(;;)
+  {
+      if (xQueueReceive( CommandQueueHandle, &ReceivedValue, portMAX_DELAY ) == pdPASS) {
+
+        printf("%d\n\r",ReceivedValue);
+
+      }
+
+    Handle_Command();
+    osDelay(1);
+  }
+  /* USER CODE END StartCommandTask */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
