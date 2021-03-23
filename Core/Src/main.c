@@ -337,7 +337,9 @@ int main(void)
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
-
+  printf("Command Not Recognized\r\n");
+  printf("Command Not Recognized\r\n");
+  printf("Command Not Recognized\r\n");
   /* Start scheduler */
   osKernelStart();
 
@@ -625,9 +627,10 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-  xQueueSendToBack( CommandQueueHandle, &s1 , 4);
-  xQueueSendToBack( CommandQueueHandle, &s1, 4);
-    osDelay(1);
+  xQueueSend( CommandQueueHandle, &s1 , 5);
+  xQueueSend( CommandQueueHandle, &s1, 5);
+  printf("fff\n\r");
+  osDelay(1);
   }
   /* USER CODE END 5 */
 }
@@ -646,13 +649,12 @@ void StartCommandTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-      if (xQueueReceive( CommandQueueHandle, &ReceivedValue, portMAX_DELAY ) == pdPASS) {
+      if (xQueueReceive( CommandQueueHandle, ReceivedValue, 4 ) == pdPASS) {
 
-        printf("%d\n\r",ReceivedValue);
+        printf("Received: %d\n\r",ReceivedValue);
 
       }
-
-    Handle_Command();
+    //Handle_Command();
     osDelay(1);
   }
   /* USER CODE END StartCommandTask */
