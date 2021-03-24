@@ -32,6 +32,11 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define CR '\r'
+#define LF '\n'
+#define CRLF "\r\n"
+#define DEL 0x7F
+#define MAX_CMD_LEN 32
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,7 +50,7 @@ DMA_HandleTypeDef hdma_usart1_rx;
 
 /* USER CODE BEGIN PV */
 uint8_t UART1_rxBuffer[1] = {0};
-uint8_t cmd_buffer[32] = {0};
+uint8_t cmd_buffer[MAX_CMD_LEN] = {0};
 uint8_t cmd_length = 0;
 uint8_t cmd_readyToProcess = 0;
 /* USER CODE END PV */
@@ -57,6 +62,11 @@ static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+uint8_t GET_STRING_LEN(char *s);
+void NEWLINE(void);
+void SEND_LINE(char *s);
+void SEND_CMD(void);
+void BACKSPACE(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -95,6 +105,9 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+  NEWLINE();
+  NEWLINE();
+  SEND_LINE("---------- START ----------");
   HAL_UART_Receive_DMA (&huart1, UART1_rxBuffer, 1);
   /* USER CODE END 2 */
 
@@ -258,22 +271,97 @@ static void MX_GPIO_Init(void)
   */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    // For testing
-    HAL_UART_Transmit(&huart1, "\n\rReceived: ", 12, 100);
 
-    // Comment out the following function once we switch to local echo on the terminal
-    // This function is just used to echo back the received data
-    HAL_UART_Transmit(&huart1, UART1_rxBuffer, 1, 100);
-
-    if(cmd_readyToProcess){
+    if (cmd_readyToProcess)
+    {
         // Tell user command is being processed
+        SEND_LINE("Command is Already Being Processed");
     }
-    else{
-        // Update command buffer
+    else if (*UART1_rxBuffer == CR)
+    {
+        // Command is ready to process if user hits enter (sends line feed aka newline)
+        cmd_readyToProcess = 1;
+        NEWLINE();
+        SEND_LINE("Command Received Below");
+        SEND_CMD();
+        NEWLINE();
+    }
+    else if (*UART1_rxBuffer == DEL && cmd_length > 0)
+    {
+        // Reduce command length if backspace is sent
+        cmd_length--;
+
+        // Comment out the following function once we switch to local echo on the terminal
+        // This function is just used to echo back the received data
+        HAL_UART_Transmit(&huart1, UART1_rxBuffer, 1, 100);
+    }
+    else if (cmd_length >= MAX_CMD_LEN)
+    {
+        // Max command length is reached
+        NEWLINE();
+        SEND_LINE("Max Command Length Reached");
+        SEND_CMD();
+    }
+    else
+    {
+        // If no command is being processed, no command is ready, no backspace is send, and
+        // the max command length isn't reached, then add character to the command buffer
+        cmd_buffer[cmd_length] = *UART1_rxBuffer;
+        cmd_length++;
+
+        // Comment out the following function once we switch to local echo on the terminal
+        // This function is just used to echo back the received data
+        HAL_UART_Transmit(&huart1, UART1_rxBuffer, 1, 100);
     }
 
     // Receive next byte
     HAL_UART_Receive_DMA(&huart1, UART1_rxBuffer, 1);
+}
+
+/**
+  * @brief  This function gets the string length
+  */
+uint8_t GET_STRING_LEN(char *s)
+{
+    uint8_t len = 0;
+    while (s[len] != 0)
+    {
+        len++;
+    }
+    return len;
+}
+
+/**
+  * @brief  This function starts a newline
+  */
+void NEWLINE()
+{
+    HAL_UART_Transmit(&huart1, CRLF, 2, 100);
+}
+
+/**
+  * @brief  This function sends a line
+  */
+void SEND_LINE(char *s)
+{
+    HAL_UART_Transmit(&huart1, s, GET_STRING_LEN(s), 100);
+    NEWLINE();
+}
+
+/**
+  * @brief  This function sends the command currently in the command buffer
+  */
+void SEND_CMD()
+{
+    HAL_UART_Transmit(&huart1, cmd_buffer, cmd_length, 100);
+}
+
+/**
+  * @brief  This function sends a backspace
+  */
+void BACKSPACE()
+{
+    HAL_UART_Transmit(&huart1, DEL, 1, 100);
 }
 /* USER CODE END 4 */
 
