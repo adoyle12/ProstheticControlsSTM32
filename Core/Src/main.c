@@ -28,6 +28,7 @@
 #include "SERVO.h"
 #include "string.h"
 #include "stdlib.h"
+#include "queue.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -54,10 +55,24 @@ TIM_HandleTypeDef htim2;
 
 UART_HandleTypeDef huart4;
 
-osThreadId defaultTaskHandle;
-osThreadId CommandTaskHandle;
-osMessageQId CommandQueueHandle;
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 1024 * 4
+};
+/* Definitions for RecvTask */
+osThreadId_t RecvTaskHandle;
+const osThreadAttr_t RecvTask_attributes = {
+  .name = "RecvTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 1024 * 4
+};
 /* USER CODE BEGIN PV */
+
+QueueHandle_t CommandQueueHandle;
+int receive = 0;
 
 /* USER CODE END PV */
 
@@ -67,8 +82,8 @@ static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_UART4_Init(void);
-void StartDefaultTask(void const * argument);
-void StartCommandTask(void const * argument);
+void StartDefaultTask(void *argument);
+void StartRecvTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 static void Run_Servos_Concurrent(void);
@@ -304,6 +319,9 @@ int main(void)
 
   /* USER CODE END 2 */
 
+  /* Init scheduler */
+  osKernelInitialize();
+
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
@@ -316,39 +334,37 @@ int main(void)
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
-  /* Create the queue(s) */
-  /* definition and creation of CommandQueue */
-  osMessageQDef(CommandQueue, 20, uint16_t);
-  CommandQueueHandle = osMessageCreate(osMessageQ(CommandQueue), NULL);
-
   /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
+
+    CommandQueueHandle = xQueueCreate(20, sizeof(char*));
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* creation of defaultTask */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* definition and creation of CommandTask */
-  osThreadDef(CommandTask, StartCommandTask, osPriorityIdle, 0, 128);
-  CommandTaskHandle = osThreadCreate(osThread(CommandTask), NULL);
+  /* creation of RecvTask */
+  RecvTaskHandle = osThreadNew(StartRecvTask, NULL, &RecvTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
-  printf("Command Not Recognized\r\n");
-  printf("Command Not Recognized\r\n");
-  printf("Command Not Recognized\r\n");
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
+
   /* Start scheduler */
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
 
-  while (1) {
-
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
@@ -615,10 +631,11 @@ static void MX_GPIO_Init(void)
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-  uint16_t s1 = 5;
+  char* s1 = "hello\n";
+  void *pptr = &s1;
   SERVO_Init(0);
   SERVO_Init(1);
   SERVO_Init(2);
@@ -627,37 +644,60 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-  xQueueSend( CommandQueueHandle, &s1 , 5);
-  xQueueSend( CommandQueueHandle, &s1, 5);
+  xQueueSendToBack( CommandQueueHandle, pptr , portMAX_DELAY);
+  receive = 1;
+
   printf("fff\n\r");
   osDelay(1);
   }
   /* USER CODE END 5 */
 }
 
-/* USER CODE BEGIN Header_StartCommandTask */
+/* USER CODE BEGIN Header_StartRecvTask */
 /**
-* @brief Function implementing the CommandTask thread.
+* @brief Function implementing the RecvTask thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartCommandTask */
-void StartCommandTask(void const * argument)
+/* USER CODE END Header_StartRecvTask */
+void StartRecvTask(void *argument)
 {
-  /* USER CODE BEGIN StartCommandTask */
-    uint16_t ReceivedValue = 0;
-  /* Infinite loop */
-  for(;;)
-  {
-      if (xQueueReceive( CommandQueueHandle, ReceivedValue, 4 ) == pdPASS) {
+  /* USER CODE BEGIN StartRecvTask */
+    char* ptr;
+    /* Infinite loop */
+    for(;;)
+    {
+        if(receive == 1) {
+            if (xQueueReceive(CommandQueueHandle, &ptr, portMAX_DELAY) == pdPASS) {
+                receive = 0;
+                printf("Received: %s\n\r", ptr);
 
-        printf("Received: %d\n\r",ReceivedValue);
+            }
+        }
+        osDelay(1);
+    }
+  /* USER CODE END StartRecvTask */
+}
 
-      }
-    //Handle_Command();
-    osDelay(1);
+ /**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM5 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM5) {
+    HAL_IncTick();
   }
-  /* USER CODE END StartCommandTask */
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
 }
 
 /**
