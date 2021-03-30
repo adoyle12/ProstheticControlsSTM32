@@ -190,7 +190,7 @@ static void Run_Servos_Concurrent(void){
 
     int up = 1;
     int min = 50;
-    int max = 110;
+    int max = 100;
     int delay = 5;
 
     for (int i=max;i>min; i--) {
@@ -369,6 +369,7 @@ int main(void)
   /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
+
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
@@ -735,10 +736,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-  xQueueSendToBack( CommandQueueHandle, pptr , portMAX_DELAY);
-  receive = 1;
-
-  //printf("fff\n\r");
+      Run_Servos_Concurrent();
   osDelay(1);
   }
   /* USER CODE END 5 */
