@@ -84,14 +84,14 @@ void _exit (int status)
 #include  <errno.h>
 #include  <sys/unistd.h> // STDOUT_FILENO, STDERR_FILENO
 #include <stm32g4xx_hal.h>
-extern UART_HandleTypeDef huart4;
+extern UART_HandleTypeDef huart1;
 
 int _read (int file, char *ptr, int len)
 {
-    HAL_UART_Receive(&huart4,(uint8_t*)ptr++,1,0xffff);
-    HAL_UART_Transmit(&huart4,(uint8_t *)(ptr-1),1,10);
+    HAL_UART_Receive(&huart1,(uint8_t*)ptr++,1,0xffff);
+    HAL_UART_Transmit(&huart1,(uint8_t *)(ptr-1),1,10);
     if (*(ptr-1)==0x0D){
-        HAL_UART_Transmit(&huart4,(uint8_t *)"\n",1,10);
+        HAL_UART_Transmit(&huart1,(uint8_t *)"\n",1,10);
         *(ptr-1)="\n";
     }
 
@@ -109,7 +109,7 @@ int _write(int file, char *data, int len)
 
     // arbitrary timeout 1000
     HAL_StatusTypeDef status =
-            HAL_UART_Transmit(&huart4, (uint8_t*)data, len, 1000);
+            HAL_UART_Transmit(&huart1, (uint8_t*)data, len, 1000);
 
     // return # of bytes written - as best we can tell
     return (status == HAL_OK ? len : 0);
