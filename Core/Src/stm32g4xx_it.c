@@ -232,7 +232,7 @@ void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 
     uint8_t data_length  = 255 - __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);   //Calculate the length of the received data
 
-    xQueueSendToBack( CommandQueueHandle, &receive_buff , 5);
+    xQueueSendToBackFromISR( CommandQueueHandle, &receive_buff , 5);
     receive = 1;
     memset(receive_buff,0,data_length);                                            //Clear the receive buffer
     data_length = 0;

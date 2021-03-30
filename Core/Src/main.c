@@ -40,6 +40,7 @@
 /* USER CODE BEGIN PD */
 
 #define HAL_UART_MODULE_ENABLED
+
 #define SERVO_Motor1    0
 
 /* USER CODE END PD */
@@ -190,26 +191,24 @@ static void Run_Servos_Concurrent(void){
 
     int up = 1;
     int min = 50;
-    int max = 100;
-    int delay = 5;
+    int max = 110;
+    int delay = 30;
 
-    for (int i=max;i>min; i--) {
-
-        SERVO_RawMove(0,i);
-        SERVO_RawMove(1,i);
-        SERVO_RawMove(2,i);
-        SERVO_RawMove(3,i);
+    for (int i=min;i<max; i++) {
         SERVO_RawMove(4,i);
+        SERVO_RawMove(3,i);
+        SERVO_RawMove(2,i);
+        SERVO_RawMove(1,i);
+        SERVO_RawMove(0,i);
         HAL_Delay(delay);
     }
 
-    for (int i=min;i<max; i++) {
-
-        SERVO_RawMove(0,i);
-        SERVO_RawMove(1,i);
-        SERVO_RawMove(2,i);
-        SERVO_RawMove(3,i);
+    for (int i=max;i>min; i--) {
         SERVO_RawMove(4,i);
+        SERVO_RawMove(3,i);
+        SERVO_RawMove(2,i);
+        SERVO_RawMove(1,i);
+        SERVO_RawMove(0,i);
         HAL_Delay(delay);
     }
 
@@ -737,7 +736,6 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
       Run_Servos_Concurrent();
-  osDelay(1);
   }
   /* USER CODE END 5 */
 }
