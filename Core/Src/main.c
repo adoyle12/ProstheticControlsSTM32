@@ -29,6 +29,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "queue.h"
+#include "command_handler.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -315,16 +316,15 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-  //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-  //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
-  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+    SERVO_Init(0);
+    SERVO_Init(1);
+    SERVO_Init(2);
+    SERVO_Init(3);
+    SERVO_Init(4);
+    SERVO_Init(5);
 
-  char s2[8] = "HELLO\n";
-  char s3[8] = "GOODBYE\n";
-
+    CommandHandler_Initialize();
     __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
     HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);     //Set up DMA transmission, talk about the data transfer of serial port 1 to recvive_buff,
   /* USER CODE END 2 */
@@ -672,17 +672,11 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-  char* s1 = "hello\n";
-  void *pptr = &s1;
-  SERVO_Init(0);
-  SERVO_Init(1);
-  SERVO_Init(2);
-  SERVO_Init(3);
-  SERVO_Init(4);
+
   /* Infinite loop */
   for(;;)
   {
-      Run_Servos_Concurrent();
+      osDelay(1);
   }
   /* USER CODE END 5 */
 }
@@ -697,14 +691,16 @@ void StartDefaultTask(void *argument)
 void StartRecvTask(void *argument)
 {
   /* USER CODE BEGIN StartRecvTask */
-    char* ptr;
+    char* str;
     /* Infinite loop */
     for(;;)
     {
         if(receive == 1) {
-            if (xQueueReceive(CommandQueueHandle, &ptr, portMAX_DELAY) == pdPASS) {
+            if (xQueueReceive(CommandQueueHandle, &str, portMAX_DELAY) == pdPASS) {
                 receive = 0;
-                printf("Received: %s\n\r", ptr);
+                struct parsed_command ParsedCommand = CommandHandler_ParseCommand(str);
+                CommandHandler_HandleCommand(ParsedCommand);
+                printf("Received: %s\n\r", str);
 
             }
         }
