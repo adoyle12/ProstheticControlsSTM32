@@ -66,28 +66,56 @@ void _exit (int status)
 	while (1) {}		/* Make sure we hang here */
 }
 
-__attribute__((weak)) int _read(int file, char *ptr, int len)
+
+
+
+//__attribute__((weak)) int _write(int file, char *ptr, int len)
+//{
+//	int DataIdx;
+//
+//	for (DataIdx = 0; DataIdx < len; DataIdx++)
+//	{
+//		__io_putchar(*ptr++);
+//	}
+//	return len;
+//}
+
+/* USER CODE BEGIN 1 */
+#include  <errno.h>
+#include  <sys/unistd.h> // STDOUT_FILENO, STDERR_FILENO
+#include <stm32g4xx_hal.h>
+extern UART_HandleTypeDef huart1;
+
+int _read (int file, char *ptr, int len)
 {
-	int DataIdx;
+    HAL_UART_Receive(&huart1,(uint8_t*)ptr++,1,0xffff);
+    HAL_UART_Transmit(&huart1,(uint8_t *)(ptr-1),1,10);
+    if (*(ptr-1)==0x0D){
+        HAL_UART_Transmit(&huart1,(uint8_t *)"\n",1,10);
+        *(ptr-1)="\n";
+    }
 
-	for (DataIdx = 0; DataIdx < len; DataIdx++)
-	{
-		*ptr++ = __io_getchar();
-	}
-
-return len;
+    return 1;
 }
 
-__attribute__((weak)) int _write(int file, char *ptr, int len)
-{
-	int DataIdx;
 
-	for (DataIdx = 0; DataIdx < len; DataIdx++)
-	{
-		__io_putchar(*ptr++);
-	}
-	return len;
+int _write(int file, char *data, int len)
+{
+    if ((file != STDOUT_FILENO) && (file != STDERR_FILENO))
+    {
+        errno = EBADF;
+        return -1;
+    }
+
+    // arbitrary timeout 1000
+    HAL_StatusTypeDef status =
+            HAL_UART_Transmit(&huart1, (uint8_t*)data, len, 1000);
+
+    // return # of bytes written - as best we can tell
+    return (status == HAL_OK ? len : 0);
 }
+
+/* USER CODE END 1 */
 
 int _close(int file)
 {

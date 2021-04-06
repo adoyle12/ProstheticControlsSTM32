@@ -21,10 +21,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32g4xx_it.h"
-#include "FreeRTOS.h"
-#include "task.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "string.h"
+#include "stdio.h"
+#include "FreeRTOS.h"
+#include"queue.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,11 +46,15 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+extern uint8_t receive_buff[255];
+extern QueueHandle_t CommandQueueHandle;
+extern int receive;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
+void USER_UART_IRQHandler(UART_HandleTypeDef *huart);
+void USAR_UART_IDLECallback(UART_HandleTypeDef *huart);
 
 /* USER CODE END PFP */
 
@@ -58,6 +64,9 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_usart1_rx;
+extern UART_HandleTypeDef huart1;
+extern TIM_HandleTypeDef htim5;
 
 /* USER CODE BEGIN EV */
 
@@ -154,28 +163,6 @@ void DebugMon_Handler(void)
   /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
-/**
-  * @brief This function handles System tick timer.
-  */
-void SysTick_Handler(void)
-{
-  /* USER CODE BEGIN SysTick_IRQn 0 */
-
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-#if (INCLUDE_xTaskGetSchedulerState == 1 )
-  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
-  {
-#endif /* INCLUDE_xTaskGetSchedulerState */
-  xPortSysTickHandler();
-#if (INCLUDE_xTaskGetSchedulerState == 1 )
-  }
-#endif /* INCLUDE_xTaskGetSchedulerState */
-  /* USER CODE BEGIN SysTick_IRQn 1 */
-
-  /* USER CODE END SysTick_IRQn 1 */
-}
-
 /******************************************************************************/
 /* STM32G4xx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
@@ -183,7 +170,73 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32g4xx.s).                    */
 /******************************************************************************/
 
-/* USER CODE BEGIN 1 */
+/**
+  * @brief This function handles DMA1 channel3 global interrupt.
+  */
+void DMA1_Channel3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
 
+  /* USER CODE END DMA1_Channel3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_rx);
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel3_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART1 global interrupt / USART1 wake-up interrupt through EXTI line 25.
+  */
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+    USER_UART_IRQHandler(&huart1);
+  /* USER CODE END USART1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM5 global interrupt.
+  */
+void TIM5_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM5_IRQn 0 */
+
+  /* USER CODE END TIM5_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim5);
+  /* USER CODE BEGIN TIM5_IRQn 1 */
+
+  /* USER CODE END TIM5_IRQn 1 */
+}
+
+/* USER CODE BEGIN 1 */
+void USER_UART_IRQHandler(UART_HandleTypeDef *huart)
+{
+    if(USART1 == huart1.Instance)                                   //Determine whether it is serial port 1
+    {
+        if(RESET != __HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE))   //Determine whether it is an idle interrupt
+        {
+            __HAL_UART_CLEAR_IDLEFLAG(&huart1);                     //Clear the idle interrupt flag (otherwise it will continue to enter the interrupt)
+            printf("\r\nUART1 Idle IQR Detected\r\n");
+            USAR_UART_IDLECallback(huart);                          //Call interrupt handler
+        }
+    }
+}
+
+void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
+{
+    HAL_UART_DMAStop(&huart1);                                                     //Stop this DMA transfer
+
+    uint8_t data_length  = 255 - __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);   //Calculate the length of the received data
+
+    xQueueSendToBackFromISR( CommandQueueHandle, &receive_buff , 5);
+    receive = 1;
+    memset(receive_buff,0,data_length);                                            //Clear the receive buffer
+    data_length = 0;
+    HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);                    //Restart to start DMA transfer every 255 bytes of data
+}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
