@@ -6,15 +6,32 @@
 #include "SERVO.h"
 #include "stdlib.h"
 
+int (*Commands[NUM_COMMANDS]) ( char** arguments);
 
 struct parsed_command CommandHandler_ParseCommand(char* str){
     struct parsed_command parsedCommand;
     char* command;
     char* argument;
+    int commandID;
 
     printf(" *** Begin Parsing Command *** \n\r*\n\r*\n\r*");
     command = strtok(str," -");
+
+    // Handle Error
+    if(command == NULL){
+        parsedCommand.commandID = -1;
+        return  parsedCommand;
+    }
+
     printf("* Command: %s \n\r*\n\r*",command);
+    commandID = CommandHandler_GetCommandID(command);
+
+    // Handle Error
+    if(commandID == -1){
+        parsedCommand.commandID = -1;
+        return  parsedCommand;
+    }
+
     parsedCommand.commandID = CommandHandler_GetCommandID(command);
 
     for(int i = 0; i < 5; i++){
@@ -36,13 +53,13 @@ int CommandHandler_HandleCommand(struct parsed_command parsedCommand){
     Commands[parsedCommand.commandID](parsedCommand.arguments);
 }
 
-int CommandHandler_GetCommandID(char* command){
+int CommandHandler_GetCommandID(char* command) {
 
-    if (strcmp(command,"sweep") !=0){
+    if (strcmp(command, "sweep") == 0) {
         return 0;
-    }
-    else
+    } else {
         return -1;
+    }
 }
 
 int CommandHandler_Initialize(){

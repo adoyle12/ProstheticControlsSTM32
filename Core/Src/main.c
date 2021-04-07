@@ -698,10 +698,12 @@ void StartRecvTask(void *argument)
         if(receive == 1) {
             if (xQueueReceive(CommandQueueHandle, &str, portMAX_DELAY) == pdPASS) {
                 receive = 0;
-                struct parsed_command ParsedCommand = CommandHandler_ParseCommand(str);
-                CommandHandler_HandleCommand(ParsedCommand);
                 printf("Received: %s\n\r", str);
-
+                struct parsed_command ParsedCommand = CommandHandler_ParseCommand(str);
+                if(ParsedCommand.commandID != -1){
+                 CommandHandler_HandleCommand(ParsedCommand);
+                }
+                else printf("Could Not Parse Command: %s",str);
             }
         }
         osDelay(1);

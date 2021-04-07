@@ -12,7 +12,7 @@ typedef struct parsed_command {
     char* arguments[5];
 };
 
-int (*Commands[NUM_COMMANDS]) ( char** arguments);
+
 struct parsed_command CommandHandler_ParseCommand(char* str);
 int CommandHandler_HandleCommand(struct parsed_command parsedCommand);
 int CommandHandler_GetCommandID(char* command);
