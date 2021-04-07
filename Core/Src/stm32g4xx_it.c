@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32g4xx_it.h"
+#include "string.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "string.h"
@@ -228,12 +229,16 @@ void USER_UART_IRQHandler(UART_HandleTypeDef *huart)
 
 void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 {
-    HAL_UART_DMAStop(&huart1);                                                     //Stop this DMA transfer
+    HAL_UART_DMAStop(&huart1);//Stop this DMA transfer
 
     uint8_t data_length  = 255 - __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);   //Calculate the length of the received data
+
     if(data_length != 255) {
-        xQueueSendToBackFromISR(CommandQueueHandle, &receive_buff, 5);
-        printf("Received: %s\n\r", receive_buff);
+        data_length++;
+        char str[50];
+        void* ptr = &str;
+        snprintf(str,50,"%s\n",&receive_buff);
+        xQueueSendToBackFromISR(CommandQueueHandle, &ptr, 5);
         receive = 1;
     }
     memset(receive_buff,0,data_length);                                                 //Clear the receive buffer

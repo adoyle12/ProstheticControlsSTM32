@@ -35,7 +35,7 @@ struct parsed_command CommandHandler_ParseCommand(char* str){
     parsedCommand.commandID = CommandHandler_GetCommandID(command);
 
     for(int i = 0; i < 5; i++){
-      argument = strtok(str," -");
+      argument = strtok(NULL," -");
       if (argument != NULL){
           parsedCommand.arguments[i] = argument;
           printf("* Argument %d: %s\n\r*\n\r*",i,argument);
@@ -74,12 +74,12 @@ int CommandHandler_ServoSweep(char** arguments){
     for (int i=100;i>10; i--) {
 
         SERVO_RawMove(servoID,i);
-        HAL_Delay(100);
+        HAL_Delay(6);
     }
 
-    for (int i=10;i<100; i++) {
+    for (int i=10;i<100; i++){
 
         SERVO_RawMove(servoID,i);
-        HAL_Delay(100);
+        HAL_Delay(6);
     }
 }
