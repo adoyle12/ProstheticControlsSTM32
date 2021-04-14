@@ -321,17 +321,17 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buff, ADC_BUF_LEN);
 
+  // TODO testing ADC
+  while(1){
+
+  }
   char s2[8] = "HELLO\n";
   char s3[8] = "GOODBYE\n";
 
   __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
   HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);     //Set up DMA transmission, talk about the data transfer of serial port 1 to recvive_buff,
 
-  // TODO testing ADC
-  while(1){
-      uint16_t raw = HAL_ADC_GetValue(&hadc1);
-      printf("Raw Data: %hu\r\n", raw);
-  }
+
   /* USER CODE END 2 */
 
   /* Init scheduler */

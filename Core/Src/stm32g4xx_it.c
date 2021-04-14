@@ -255,9 +255,8 @@ void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
-    //uint16_t raw = HAL_ADC_GetValue(hadc);
-    //printf("Raw Data: %hu\r\n",raw);
-    printf("A to D Conversion Complete\r\n");
+    uint16_t raw = HAL_ADC_GetValue(hadc);
+    printf("%hu\r\n", raw);
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
