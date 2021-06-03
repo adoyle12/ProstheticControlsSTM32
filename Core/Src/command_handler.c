@@ -55,8 +55,10 @@ int CommandHandler_HandleCommand(struct parsed_command parsedCommand){
 
 int CommandHandler_GetCommandID(char* command) {
 
-    if (strcmp(command, "sweep") == 0) {
+    if (strcmp(command, "sweepfast") == 0 || strcmp(command, "sweepf") == 0 || strcmp(command, "sweep") == 0) {
         return 0;
+    } else if (strcmp(command, "sweepslow") == 0 || strcmp(command, "sweeps") == 0) {
+        return 1;
     } else {
         return -1;
     }
@@ -64,11 +66,12 @@ int CommandHandler_GetCommandID(char* command) {
 
 int CommandHandler_Initialize(){
 
-    Commands[COMMAND_SWEEP_SERVOS] = CommandHandler_ServoSweep;
+    Commands[COMMAND_SWEEP_SERVOS_FAST] = CommandHandler_ServoSweepFast;
+    Commands[COMMAND_SWEEP_SERVOS_SLOW] = CommandHandler_ServoSweepSlow;
     return 0;
 }
 
-int CommandHandler_ServoSweep(char** arguments){
+int CommandHandler_ServoSweepFast(char** arguments){
 
     int servoID = atoi(arguments[0]);
     for (int i=100;i>10; i--) {
@@ -81,5 +84,21 @@ int CommandHandler_ServoSweep(char** arguments){
 
         SERVO_RawMove(servoID,i);
         HAL_Delay(6);
+    }
+}
+
+int CommandHandler_ServoSweepSlow(char** arguments){
+
+    int servoID = atoi(arguments[0]);
+    for (int i=100;i>10; i--) {
+
+        SERVO_RawMove(servoID,i);
+        HAL_Delay(15);
+    }
+
+    for (int i=10;i<100; i++){
+
+        SERVO_RawMove(servoID,i);
+        HAL_Delay(15);
     }
 }
