@@ -59,6 +59,10 @@ int CommandHandler_GetCommandID(char* command) {
         return 0;
     } else if (strcmp(command, "sweepslow") == 0 || strcmp(command, "sweeps") == 0) {
         return 1;
+    } else if (strcmp(command, "clench") == 0) {
+        return 2;
+    } else if (strcmp(command, "release") == 0) {
+        return 3;
     } else {
         return -1;
     }
@@ -68,6 +72,8 @@ int CommandHandler_Initialize(){
 
     Commands[COMMAND_SWEEP_SERVOS_FAST] = CommandHandler_ServoSweepFast;
     Commands[COMMAND_SWEEP_SERVOS_SLOW] = CommandHandler_ServoSweepSlow;
+    Commands[COMMAND_CLENCH_SERVOS] = CommandHandler_ServoClench;
+    Commands[COMMAND_RELEASE_SERVOS] = CommandHandler_ServoRelease;
     return 0;
 }
 
@@ -100,5 +106,25 @@ int CommandHandler_ServoSweepSlow(char** arguments){
 
         SERVO_RawMove(servoID,i);
         HAL_Delay(15);
+    }
+}
+
+int CommandHandler_ServoClench(char** arguments){
+
+    int servoID = atoi(arguments[0]);
+    for (int i=100;i>10; i--) {
+
+        SERVO_RawMove(servoID,i);
+        HAL_Delay(10);
+    }
+}
+
+int CommandHandler_ServoRelease(char** arguments){
+
+    int servoID = atoi(arguments[0]);
+    for (int i=10;i<100; i++){
+
+        SERVO_RawMove(servoID,i);
+        HAL_Delay(10);
     }
 }
