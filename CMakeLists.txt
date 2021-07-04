@@ -1,7 +1,7 @@
 #THIS FILE IS AUTO GENERATED FROM THE TEMPLATE! DO NOT CHANGE!
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_VERSION 1)
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.19)
 
 # specify cross compilers and tools
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
@@ -46,8 +46,9 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
-include_directories(Core/Inc Drivers/STM32G4xx_HAL_Driver/Inc Drivers/STM32G4xx_HAL_Driver/Inc/Legacy Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F Drivers/CMSIS/Device/ST/STM32G4xx/Include Drivers/CMSIS/Include)
-include_directories(Core/util Core/SERVO)
+include_directories(/home/parallels/Capstone/ProstheticControlsSTM32/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2)
+include_directories(Core/SERVO Core/util)
+include_directories(Core/Inc /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Middlewares/Third_Party/FreeRTOS/Source/include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Drivers/STM32G4xx_HAL_Driver/Inc Drivers/STM32G4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32G4xx/Include Drivers/CMSIS/Include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/CMSIS/Include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/CMSIS/Device/ST/STM32G4xx/Include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/STM32G4xx_HAL_Driver/Inc /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/STM32G4xx_HAL_Driver/Inc/Legacy Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS)
 
 add_definitions(-DUSE_HAL_DRIVER -DSTM32G474xx -DDEBUG)
 
