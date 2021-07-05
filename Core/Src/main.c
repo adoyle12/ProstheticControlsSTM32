@@ -29,6 +29,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "queue.h"
+#include "command_handler.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -319,18 +320,23 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
+
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buff, ADC_BUF_LEN);
 
-  // TODO testing ADC
-//  while(1){
-//
-//  }
   char s2[8] = "HELLO\n";
   char s3[8] = "GOODBYE\n";
 
-  __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);\
-  HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);     //Set up DMA transmission, talk about the data transfer of serial port 1 to recvive_buff,
+  SERVO_Init(0);
+  SERVO_Init(1);
+  SERVO_Init(2);
+  SERVO_Init(3);
+  SERVO_Init(4);
+  SERVO_Init(5);
 
+  CommandHandler_Initialize();
+
+  __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
+  HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);     //Set up DMA transmission, talk about the data transfer of serial port 1 to recvive_buff,
 
   /* USER CODE END 2 */
 
@@ -746,13 +752,7 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-  char* s1 = "hello\n";
-  void *pptr = &s1;
-  SERVO_Init(0);
-  SERVO_Init(1);
-  SERVO_Init(2);
-  SERVO_Init(3);
-  SERVO_Init(4);
+
   /* Infinite loop */
   for(;;)
   {
@@ -771,15 +771,19 @@ void StartDefaultTask(void *argument)
 void StartRecvTask(void *argument)
 {
   /* USER CODE BEGIN StartRecvTask */
-    char* ptr;
+    char* str;
     /* Infinite loop */
     for(;;)
     {
         if(receive == 1) {
-            if (xQueueReceive(CommandQueueHandle, &ptr, portMAX_DELAY) == pdPASS) {
+            if (xQueueReceive(CommandQueueHandle, &str, portMAX_DELAY) == pdPASS) {
                 receive = 0;
-                printf("Received: %s\n\r", ptr);
-
+                printf("Received: %s\n\r", str);
+                struct parsed_command ParsedCommand = CommandHandler_ParseCommand(str);
+                if(ParsedCommand.commandID != -1){
+                 CommandHandler_HandleCommand(ParsedCommand);
+                }
+                else printf("Could Not Parse Command: %s",str);
             }
         }
         osDelay(1);
