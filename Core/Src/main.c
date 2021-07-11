@@ -30,6 +30,8 @@
 #include "stdlib.h"
 #include "queue.h"
 #include "command_handler.h"
+#include "sll.h"
+#include "data_processor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -303,7 +305,6 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -327,7 +328,12 @@ int main(void)
     CommandHandler_Initialize();
     __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
     HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);     //Set up DMA transmission, talk about the data transfer of serial port 1 to recvive_buff,
-  /* USER CODE END 2 */
+    printf("SUCCESSFUL PRINTF \r\n");
+
+    DataProcessor_Initialize();
+    DataProcessor_ReadData();
+    DataProcessor_CheckThreshold();
+    /* USER CODE END 2 */
 
   /* Init scheduler */
   osKernelInitialize();
@@ -370,6 +376,9 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+//  DataProcessor_ReadData();
+
   while (1)
   {
     /* USER CODE END WHILE */
