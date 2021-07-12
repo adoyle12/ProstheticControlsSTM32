@@ -1074,12 +1074,11 @@ int DataProcessor_CheckThreshold(){ //TODO: Check head is not null
 
     int isClenched;
 
-
     if(n->item >= THRESHOLD){
         DataProcessor_CompleteAction(CLENCH);
         isClenched = 1;
     } else {
-//        DataProcessor_CompleteAction(RELEASE);
+        DataProcessor_CompleteAction(RELEASE);
         isClenched = 0;
     }
 
