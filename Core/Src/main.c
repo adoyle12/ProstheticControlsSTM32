@@ -332,6 +332,7 @@ int main(void)
 
     DataProcessor_Initialize();
     DataProcessor_ReadData();
+    DataProcessor_ProcessData();
     DataProcessor_CheckThreshold();
     /* USER CODE END 2 */
 

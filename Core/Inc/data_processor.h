@@ -7,7 +7,7 @@
 
 #define RELEASE 0
 #define CLENCH 1
-#define THRESHOLD 0.15
+#define THRESHOLD 0.17
 
 int DataProcessor_Initialize();
 int DataProcessor_ReadData();

@@ -147,6 +147,16 @@ void printList(List *lp)
     printf("\n\n");
 }
 
+int getListLength(List *lp){
+    int count = 0;
+     Node *n = lp->head;
+     while (n != NULL){
+        count++;
+        n = n->next;
+     }
+     return count;
+}
+
 //Main function to execute program.
 //int exampleFunction()
 //{

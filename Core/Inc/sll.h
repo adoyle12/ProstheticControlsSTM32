@@ -40,4 +40,7 @@ float delFromHead(List * lp);
 //To print list from start to end of the list.
 void printList(List *lp);
 
+//Get list count
+int getListLength(List *lp);
+
 #endif PROSTHETICCONTROLSSTM32_SLL_H
