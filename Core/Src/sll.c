@@ -29,7 +29,6 @@ Node * createNode(float item)
 {
     Node * nNode;
     nNode = (Node *) malloc(sizeof(Node));
-
     nNode->item = item;
     nNode->next = NULL;
 
@@ -110,13 +109,15 @@ float delFromHead(List * lp)
 
     if(lp->head == NULL)
     {
-        printf("\nList is Empty ...");
+        printf("\nList is Empty ...\r\n");
         return -1;
     }
     else
     {
         item = lp->head->item;
+        Node *n = lp->head;
         lp->head = lp->head->next;
+        free(n);
     }
 
     return item;

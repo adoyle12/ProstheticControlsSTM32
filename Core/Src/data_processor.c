@@ -1011,6 +1011,8 @@ char mock_csv[] = "0\n"
                   "0.0625\n"
                   "0.046875";
 
+int isClenched = 0;
+
 int DataProcessor_Initialize(){
     printf("Initializing Linked List... \r\n");
 
@@ -1021,24 +1023,44 @@ int DataProcessor_Initialize(){
 
 }
 
-int DataProcessor_ReadData(){
-    printf("Reading data..\r\n");
-    char* pch = NULL;
+//CSV
+//int DataProcessor_ReadData(){
+//    printf("Reading data..\r\n");
+//    char* pch = NULL;
+//
+//    pch = strtok(mock_csv, "\n");
+//
+//    while (pch != NULL)
+//    {
+//        addAtTail(lp, atof(pch));
+//        pch = strtok(NULL, "\n");
+//    }
+//    printf("Done reading data..\r\n");
+//
+//    return 0;
+//}
 
-    pch = strtok(mock_csv, "\n");
+int DataProcessor_ReadData(uint16_t half_buffer[4096], int startIndex, int stopIndex){
+    printf("Reading data...\r\n");
 
-    while (pch != NULL)
+    while(delFromHead(lp) != -1){
+    }
+
+    int i;
+    for (i=startIndex; i<=stopIndex; i++)
     {
-        addAtTail(lp, atof(pch));
-        pch = strtok(NULL, "\n");
+        addAtTail(lp, half_buffer[i]);
     }
     printf("Done reading data..\r\n");
+
+    DataProcessor_ProcessData();
 
     return 0;
 }
 
-//TODO: Add comments
+//TODO: Add comments, check previous values
 int DataProcessor_ProcessData() {
+    printf("Processing data...\r\n");
     int listLength = getListLength(lp);
     int nodeIndex = 0;
     float currentSum = 0;
@@ -1064,26 +1086,28 @@ int DataProcessor_ProcessData() {
     for(int i=0; i<40; i++){
         delFromTail(lp);
     }
+    printf("Done processing data...\r\n");
+
+    DataProcessor_CheckThreshold();
 }
 
 //TODO: Check initial hand position (physical)
 int DataProcessor_CheckThreshold(){ //TODO: Check head is not null
     printf("Checking threshold..\r\n");
     Node *n = lp->head;
-    printf("Head: %f\n", lp->head->item);
+//    printf("Head: %f\n", lp->head->item);
 
-    int isClenched;
-
-    if(n->item >= THRESHOLD){
-        DataProcessor_CompleteAction(CLENCH);
-        isClenched = 1;
-    } else {
-        DataProcessor_CompleteAction(RELEASE);
-        isClenched = 0;
-    }
+//
+//    if(n->item >= THRESHOLD){
+//        DataProcessor_CompleteAction(CLENCH);
+//        isClenched = 1;
+//    } else {
+//        DataProcessor_CompleteAction(RELEASE);
+//        isClenched = 0;
+//    }
 
     while (n->next){ //TODO: not addressing last values
-        printf("%f, \r\n", n->item);
+//        printf("%f, \r\n", n->item);
         if(n->item >= 0.15 && isClenched == 0){
             DataProcessor_CompleteAction(CLENCH);
             isClenched = 1;
@@ -1092,8 +1116,9 @@ int DataProcessor_CheckThreshold(){ //TODO: Check head is not null
             isClenched = 0;
         }
         n = n->next;
-        HAL_Delay(10);
+//        HAL_Delay(10);
     }
+    printf("Done checking threshold...\r\n");
 }
 
 int DataProcessor_CompleteAction(int action){

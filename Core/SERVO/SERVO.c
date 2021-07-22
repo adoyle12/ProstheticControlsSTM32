@@ -42,7 +42,7 @@ void SERVO_MoveTo(uint16_t au16_SERVO_Instance, float af_Angle)
 /* Moves A Specific Motor With A Raw Pulse Width Value */
 void SERVO_RawMove(uint16_t au16_SERVO_Instance, uint16_t au16_Pulse)
 {
-//    printf("Raw Move: Servo %d, Pulse: %d  \r\n",au16_SERVO_Instance,au16_Pulse); //TODO: Enable
+    printf("Raw Move: Servo %d, Pulse: %d  \r\n",au16_SERVO_Instance,au16_Pulse); //TODO: Enable
     *(SERVO_CfgParam[au16_SERVO_Instance].TIM_CCRx) = au16_Pulse;
 }
 

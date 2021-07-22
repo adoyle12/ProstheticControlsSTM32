@@ -42,7 +42,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define ADC_BUF_LEN 4096
+#define ADC_BUF_LEN 1024
 #define HAL_UART_MODULE_ENABLED
 
 #define SERVO_Motor1    0
@@ -342,7 +342,7 @@ int main(void)
     //Does buffer already exist?
 
 //TODO: Reenable for processing
-//    DataProcessor_Initialize();
+    DataProcessor_Initialize();
 //    DataProcessor_ReadData();
 //    DataProcessor_ProcessData();
 //    DataProcessor_CheckThreshold();
@@ -487,7 +487,7 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV256;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.GainCompensation = 0;
@@ -517,7 +517,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
@@ -751,6 +751,18 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+//buffer is half full
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc){
+    printf("Buffer is half full.\r\n");
+    DataProcessor_ReadData(adc_buf, 0, (ADC_BUF_LEN/2)-1);
+}
+
+//buffer is full
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
+    printf("Buffer has been filled.\r\n");
+    int startIndex = (ADC_BUF_LEN/2)-1;
+    DataProcessor_ReadData(adc_buf, (ADC_BUF_LEN/2)-1, ADC_BUF_LEN-1);
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
