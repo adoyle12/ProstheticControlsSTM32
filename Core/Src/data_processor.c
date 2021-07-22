@@ -1058,7 +1058,7 @@ int DataProcessor_ReadData(uint16_t half_buffer[4096], int startIndex, int stopI
     return 0;
 }
 
-//TODO: Add comments, check previous values
+//TODO: Add comments, not processing all 40 values
 int DataProcessor_ProcessData() {
     printf("Processing data...\r\n");
     int listLength = getListLength(lp);
