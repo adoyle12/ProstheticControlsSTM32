@@ -9,7 +9,8 @@
 
 #define RELEASE 0
 #define CLENCH 1
-#define THRESHOLD 0.17
+#define LOWER_THRESHOLD 1500
+#define UPPER_THRESHOLD 2000
 
 int DataProcessor_Initialize();
 int DataProcessor_ReadData(uint16_t adc_buf_copy[4096], int startIndex, int stopIndex);

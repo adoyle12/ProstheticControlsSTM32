@@ -1108,10 +1108,10 @@ int DataProcessor_CheckThreshold(){ //TODO: Check head is not null
 
     while (n->next){ //TODO: not addressing last values
 //        printf("%f, \r\n", n->item);
-        if(n->item >= 0.15 && isClenched == 0){
+        if(n->item >= UPPER_THRESHOLD && isClenched == 0){
             DataProcessor_CompleteAction(CLENCH);
             isClenched = 1;
-        } else if(n->item < 0.1 && isClenched == 1){
+        } else if(n->item < LOWER_THRESHOLD && isClenched == 1){
             DataProcessor_CompleteAction(RELEASE);
             isClenched = 0;
         }
