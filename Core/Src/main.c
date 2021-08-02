@@ -517,7 +517,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_92CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
@@ -760,7 +760,6 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc){
 //buffer is full
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
     printf("Buffer has been filled.\r\n");
-    int startIndex = (ADC_BUF_LEN/2)-1;
     DataProcessor_ReadData(adc_buf, (ADC_BUF_LEN/2)-1, ADC_BUF_LEN-1);
 }
 /* USER CODE END 4 */
