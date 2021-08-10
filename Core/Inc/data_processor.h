@@ -9,13 +9,13 @@
 
 #define RELEASE 0
 #define CLENCH 1
-#define LOWER_THRESHOLD 20
-#define UPPER_THRESHOLD 60
+#define LOWER_THRESHOLD 200
+#define UPPER_THRESHOLD 550
 
-int DataProcessor_Initialize();
-int DataProcessor_ReadData(uint16_t adc_buf_copy[4096], int startIndex, int stopIndex);
-int DataProcessor_ProcessData();
-int DataProcessor_CheckThreshold();
+//int DataProcessor_Initialize();
+//int DataProcessor_ReadData(uint16_t adc_buf_copy[4096], int startIndex, int stopIndex);
+//int DataProcessor_ProcessData();
+int DataProcessor_CheckThreshold(uint16_t half_buffer[4096], int startIndex, int stopIndex);
 int DataProcessor_CompleteAction(int action);
 
 #endif PROSTHETICCONTROLSSTM32_DATA_PROCESSOR_H

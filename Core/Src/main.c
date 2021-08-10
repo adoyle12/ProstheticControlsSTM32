@@ -342,7 +342,7 @@ int main(void)
     //Does buffer already exist?
 
 //TODO: Reenable for processing
-    DataProcessor_Initialize();
+//    DataProcessor_Initialize();
 //    DataProcessor_ReadData();
 //    DataProcessor_ProcessData();
 //    DataProcessor_CheckThreshold();
@@ -753,14 +753,14 @@ static void MX_GPIO_Init(void)
 
 //buffer is half full
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc){
-    printf("Buffer is half full.\r\n");
-    DataProcessor_ReadData(adc_buf, 0, (ADC_BUF_LEN/2)-1);
+//    printf("Buffer is half full.\r\n");
+    DataProcessor_CheckThreshold(adc_buf, 0, (ADC_BUF_LEN/2)-1);
 }
 
 //buffer is full
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
     printf("Buffer has been filled.\r\n");
-    DataProcessor_ReadData(adc_buf, (ADC_BUF_LEN/2)-1, ADC_BUF_LEN-1);
+    DataProcessor_CheckThreshold(adc_buf, (ADC_BUF_LEN/2)-1, ADC_BUF_LEN-1);
 }
 /* USER CODE END 4 */
 
