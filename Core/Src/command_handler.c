@@ -115,7 +115,7 @@ int CommandHandler_ServoClench(char** arguments){
     for (int i=100;i>10; i--) {
 
         SERVO_RawMove(servoID,i);
-        HAL_Delay(10);
+        HAL_Delay(5);
     }
 }
 
@@ -125,6 +125,6 @@ int CommandHandler_ServoRelease(char** arguments){
     for (int i=10;i<100; i++){
 
         SERVO_RawMove(servoID,i);
-        HAL_Delay(10);
+        HAL_Delay(5);
     }
 }
