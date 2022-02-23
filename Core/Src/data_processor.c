@@ -7,11 +7,11 @@
 #include "stm32g4xx_hal.h"
 #include <command_handler.h>
 #include <math.h>
+#include <time.h>
+#include <hand.h>
+#include <main.h>
 
 //List *lp;
-
-int isClenched = 0;
-
 //int DataProcessor_Initialize(){
 //    printf("Initializing Linked List... \r\n");
 //
@@ -90,41 +90,19 @@ int isClenched = 0;
 //    DataProcessor_CheckThreshold();
 //}
 
-//TODO: Check initial hand position (physical)
+// TODO: ADD TIME DELAY
 int DataProcessor_CheckThreshold(uint16_t half_buffer[4096], int startIndex, int stopIndex){
 //    printf("** Checking threshold..\r\n");
+    int allFingers[] = {0, 1, 2, 3, 4};
 
-    while (startIndex < stopIndex){ //TODO: not addressing last values
-//        printf("%f, \r\n", n->item);
-        if(half_buffer[startIndex] >= UPPER_THRESHOLD && isClenched == 0){
-            DataProcessor_CompleteAction(CLENCH);
-            isClenched = 1;
+    while (startIndex < stopIndex){
+        if(half_buffer[startIndex] >= UPPER_THRESHOLD && FingerPositions[0] > MIN_FINGER_POSITION){
+            Hand_Move(FingerPositions[0] + 1, allFingers);
             printf("%i passed upper threshold of %i. Clenching... \r\n", half_buffer[startIndex], UPPER_THRESHOLD);
-        } else if(half_buffer[startIndex] < LOWER_THRESHOLD && isClenched == 1){
-            DataProcessor_CompleteAction(RELEASE);
-            isClenched = 0;
+        } else if(half_buffer[startIndex] < LOWER_THRESHOLD && FingerPositions[0] > MIN_FINGER_POSITION){
+            Hand_Move(FingerPositions[0] - 1, allFingers);
             printf("%i passed lower threshold of %i. Releasing... \r\n", half_buffer[startIndex], LOWER_THRESHOLD);
         }
         startIndex++;
-//        HAL_Delay(10);
-    }
-//    printf("** Done checking threshold...\r\n");
-}
-
-int DataProcessor_CompleteAction(int action){
-    if(action == 1){
-        printf("CLENCHING\r\n");
-        char *arg = "4";
-        char* arguments[5];
-        arguments[0] = arg;
-
-        CommandHandler_ServoClench(arguments);
-    } else {
-        printf("RELEASING\r\n");
-        char *arg = "4";
-        char* arguments[5];
-        arguments[0] = arg;
-
-        CommandHandler_ServoRelease(arguments);
     }
 }

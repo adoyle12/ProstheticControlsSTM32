@@ -32,6 +32,7 @@
 #include "command_handler.h"
 #include "sll.h"
 #include "data_processor.h"
+#include "hand.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -83,7 +84,7 @@ const osThreadAttr_t RecvTask_attributes = {
 uint16_t adc_buf[ADC_BUF_LEN];
 QueueHandle_t CommandQueueHandle;
 int receive = 0;
-
+int testVariable = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -759,7 +760,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc){
 
 //buffer is full
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-    printf("Buffer has been filled.\r\n");
+    printf("Buffer is full. Last value: %i\r\n", adc_buf[ADC_BUF_LEN-1]);
     DataProcessor_CheckThreshold(adc_buf, (ADC_BUF_LEN/2)-1, ADC_BUF_LEN-1);
 }
 /* USER CODE END 4 */
