@@ -11,11 +11,9 @@
 #define MAX_FINGER_POSITION 100
 #define MIN_FINGER_POSITION 10
 
-// Properties
-int FingerPositions[5];
-int isClenched;
-
 // Functions
 void Hand_Move(int destination, int fingers[]);
+
+int* GetFingerPositions();
 
 #endif PROSTHETICCONTROLSSTM32_HAND_H
