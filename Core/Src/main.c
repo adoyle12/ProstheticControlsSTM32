@@ -32,7 +32,6 @@
 #include "command_handler.h"
 #include "sll.h"
 #include "data_processor.h"
-#include "hand.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -84,7 +83,6 @@ const osThreadAttr_t RecvTask_attributes = {
 uint16_t adc_buf[ADC_BUF_LEN];
 QueueHandle_t CommandQueueHandle;
 int receive = 0;
-int testVariable = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

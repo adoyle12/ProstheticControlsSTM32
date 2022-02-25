@@ -13,7 +13,7 @@
 
 // Properties
 int FingerPositions[5];
-int isClenched = 0;
+int isClenched;
 
 // Functions
 void Hand_Move(int destination, int fingers[]);

@@ -16,6 +16,6 @@
 //int DataProcessor_ReadData(uint16_t adc_buf_copy[4096], int startIndex, int stopIndex);
 //int DataProcessor_ProcessData();
 int DataProcessor_CheckThreshold(uint16_t half_buffer[4096], int startIndex, int stopIndex);
-int DataProcessor_CompleteAction(int action);
+//int DataProcessor_CompleteAction(int action);
 
 #endif PROSTHETICCONTROLSSTM32_DATA_PROCESSOR_H
