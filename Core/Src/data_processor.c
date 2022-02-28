@@ -9,15 +9,23 @@
 #include "hand.h"
 
 int DataProcessor_CheckThreshold(uint16_t half_buffer[4096], int startIndex, int stopIndex){
-    int allFingers[] = {0, 1, 2, 3, 4};
+    //int allFingers[] = {0, 1, 2, 3, 4};
 
-    while (startIndex < stopIndex){
-        if(half_buffer[startIndex] >= UPPER_THRESHOLD && FingerPositions[0] > CLENCHED_FINGER_POSITION){ // TODO: Update to check more than thumb
-            Hand_Move(FingerPositions[0] - 5, allFingers, 5);
-            printf("%i passed upper threshold of %i. Clenching... \r\n", half_buffer[startIndex], UPPER_THRESHOLD);
-        } else if(half_buffer[startIndex] < LOWER_THRESHOLD && FingerPositions[0] < RELEASED_FINGER_POSITION){
-            Hand_Move(FingerPositions[0] + 5, allFingers, 5);
-            printf("%i passed lower threshold of %i. Releasing... \r\n", half_buffer[startIndex], LOWER_THRESHOLD);
+    while (startIndex < stopIndex){ // Iterate through half of buffer
+        if(half_buffer[startIndex] >= UPPER_THRESHOLD){ // Clench
+            for(int i = 0; i<5; i++){
+                if(FingerPositions[i] > CLENCHED_FINGER_POSITION){ // If this finger is not clenched, clench it
+                    Hand_Move(FingerPositions[0] - 5, (int[1]) {i}, 1);
+                    printf("%i passed upper threshold of %i. Clenching... \r\n", half_buffer[startIndex], UPPER_THRESHOLD);
+                }
+            }
+        } else if(half_buffer[startIndex] < LOWER_THRESHOLD){ // Release
+            for(int i = 0; i<5; i++){
+                if(FingerPositions[i] < RELEASED_FINGER_POSITION){ // If this finger is not released, release it
+                    Hand_Move(FingerPositions[0] + 5, (int[1]) {i}, 1);
+                    printf("%i passed lower threshold of %i. Releasing... \r\n", half_buffer[startIndex], LOWER_THRESHOLD);
+                }
+            }
         }
         startIndex++;
     }
