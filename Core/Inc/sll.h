@@ -43,4 +43,4 @@ void printList(List *lp);
 //Get list count
 int getListLength(List *lp);
 
-#endif PROSTHETICCONTROLSSTM32_SLL_H
+#endif //PROSTHETICCONTROLSSTM32_SLL_H

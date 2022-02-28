@@ -8,20 +8,17 @@
 #include <time.h>
 #include "hand.h"
 
-// TODO: ADD TIME DELAY
 int DataProcessor_CheckThreshold(uint16_t half_buffer[4096], int startIndex, int stopIndex){
-//    printf("** Checking threshold..\r\n");
     int allFingers[] = {0, 1, 2, 3, 4};
 
     while (startIndex < stopIndex){
-        if(half_buffer[startIndex] >= UPPER_THRESHOLD && GetFingerPositions()[0] > MIN_FINGER_POSITION){ // TODO: Update to check more than thumb
-            Hand_Move(GetFingerPositions()[0] + 1, allFingers);
+        if(half_buffer[startIndex] >= UPPER_THRESHOLD && FingerPositions[0] > CLENCHED_FINGER_POSITION){ // TODO: Update to check more than thumb
+            Hand_Move(FingerPositions[0] - 5, allFingers, 5);
             printf("%i passed upper threshold of %i. Clenching... \r\n", half_buffer[startIndex], UPPER_THRESHOLD);
-        } else if(half_buffer[startIndex] < LOWER_THRESHOLD && GetFingerPositions()[0] < MAX_FINGER_POSITION){
-            Hand_Move(GetFingerPositions()[0] - 1, allFingers);
+        } else if(half_buffer[startIndex] < LOWER_THRESHOLD && FingerPositions[0] < RELEASED_FINGER_POSITION){
+            Hand_Move(FingerPositions[0] + 5, allFingers, 5);
             printf("%i passed lower threshold of %i. Releasing... \r\n", half_buffer[startIndex], LOWER_THRESHOLD);
         }
-        HAL_Delay(5);
         startIndex++;
     }
 }

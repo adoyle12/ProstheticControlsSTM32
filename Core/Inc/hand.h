@@ -8,12 +8,12 @@
 #define MIDDLE 2
 #define RING 3
 #define LITTLE 4
-#define MAX_FINGER_POSITION 100
-#define MIN_FINGER_POSITION 10
+#define RELEASED_FINGER_POSITION 100
+#define CLENCHED_FINGER_POSITION 10
+
+extern int FingerPositions[5];
 
 // Functions
-void Hand_Move(int destination, int fingers[]);
+void Hand_Move(int destination, int *fingers, int fingerArraySize);
 
-int* GetFingerPositions();
-
-#endif PROSTHETICCONTROLSSTM32_HAND_H
+#endif //PROSTHETICCONTROLSSTM32_HAND_H
