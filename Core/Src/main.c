@@ -24,10 +24,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "FreeRTOS.h"
-#include "stdio.h"
+#include <stdio.h>
 #include "SERVO.h"
-#include "string.h"
-#include "stdlib.h"
+#include <string.h>
+#include <stdlib.h>
 #include "queue.h"
 #include "command_handler.h"
 #include "sll.h"
@@ -83,7 +83,6 @@ const osThreadAttr_t RecvTask_attributes = {
 uint16_t adc_buf[ADC_BUF_LEN];
 QueueHandle_t CommandQueueHandle;
 int receive = 0;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -103,7 +102,7 @@ static void Run_Servos_Concurrent(void);
 static void Run_Servos_Consecutive(void);
 static void Handle_Command(char* str);
 static unsigned char getServos(char[]);
-static float getPos(char[]);
+//static float getPos(char[]);
 
 /* USER CODE END PFP */
 
@@ -273,17 +272,17 @@ static unsigned char getServos(char cmd[]){
     return servoMask;
 }
 
-static float getPos(char cmd[]){
-
-    char *position_prt = strchr(cmd, '.');
-    int index = position_prt - cmd;
-
-    char pos[7];
-    memcpy(pos, cmd[index-3], 6);
-    pos[6] = '\0';
-
-    return strtof(pos, NULL);
-}
+//static float getPos(char cmd[]){
+//
+//    char *position_prt = strchr(cmd, '.');
+//    int index = position_prt - cmd;
+//
+//    char pos[7];
+//    memcpy(pos, cmd[index-3], 6);
+//    pos[6] = '\0';
+//
+//    return strtof(pos, NULL);
+//}
 
 uint8_t receive_buff[255];
 /* USER CODE END 0 */
@@ -365,7 +364,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_QUEUES */
 
-    CommandQueueHandle = xQueueCreate(20, sizeof(char*));
+  CommandQueueHandle = xQueueCreate(20, sizeof(char*));
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -759,7 +758,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc){
 
 //buffer is full
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-    printf("Buffer has been filled.\r\n");
+    printf("Buffer is full. Last value: %i\r\n", adc_buf[ADC_BUF_LEN-1]);
     DataProcessor_CheckThreshold(adc_buf, (ADC_BUF_LEN/2)-1, ADC_BUF_LEN-1);
 }
 /* USER CODE END 4 */

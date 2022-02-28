@@ -19,9 +19,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
 #Uncomment for hardware floating point
-#add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
-#add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
-#add_link_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
+add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
+add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
+add_link_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
 
 #Uncomment for software floating point
 #add_compile_options(-mfloat-abi=soft)
@@ -30,7 +30,7 @@ add_compile_options(-mcpu=cortex-m4 -mthumb -mthumb-interwork)
 add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0)
 
 # uncomment to mitigate c++17 absolute addresses warnings
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register")
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     message(STATUS "Maximum optimization for speed")
@@ -46,7 +46,12 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
-include_directories(Core/Inc /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Middlewares/Third_Party/FreeRTOS/Source/include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Drivers/STM32G4xx_HAL_Driver/Inc Drivers/STM32G4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32G4xx/Include Drivers/CMSIS/Include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/CMSIS/Include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/CMSIS/Device/ST/STM32G4xx/Include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/STM32G4xx_HAL_Driver/Inc /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/STM32G4xx_HAL_Driver/Inc/Legacy Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS)
+include_directories(Core/util)
+include_directories(Core/SERVO)
+include_directories(Core/Src)
+include_directories(Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2)
+include_directories(Core/Inc home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Middlewares/Third_Party/FreeRTOS/Source/include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Drivers/STM32G4xx_HAL_Driver/Inc Drivers/STM32G4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32G4xx/Include Drivers/CMSIS/Include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/CMSIS/Include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/CMSIS/Device/ST/STM32G4xx/Include /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/STM32G4xx_HAL_Driver/Inc /home/parallels/STM32Cube/Repository/STM32Cube_FW_G4_V1.3.0/Drivers/STM32G4xx_HAL_Driver/Inc/Legacy Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS)
+
 
 add_definitions(-DUSE_HAL_DRIVER -DSTM32G474xx -DDEBUG)
 
