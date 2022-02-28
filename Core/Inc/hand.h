@@ -13,7 +13,6 @@
 
 extern int FingerPositions[5];
 
-// Functions
 void Hand_Move(int destination, int *fingers, int fingerArraySize);
 
 #endif //PROSTHETICCONTROLSSTM32_HAND_H
