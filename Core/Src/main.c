@@ -58,6 +58,8 @@
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
+DAC_HandleTypeDef hdac1;
+
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 
@@ -93,6 +95,7 @@ static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_ADC1_Init(void);
+static void MX_DAC1_Init(void);
 void StartDefaultTask(void *argument);
 void StartRecvTask(void *argument);
 
@@ -294,7 +297,6 @@ uint8_t receive_buff[255];
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -319,6 +321,7 @@ int main(void)
   MX_TIM2_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
+  MX_DAC1_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
@@ -335,6 +338,7 @@ int main(void)
     __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
     HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);     //Set up DMA transmission, talk about the data transfer of serial port 1 to recvive_buff,
     HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_BUF_LEN);
+    HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
     printf("SUCCESSFUL PRINTF \r\n");
 
 
@@ -381,7 +385,6 @@ int main(void)
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
-
   /* Start scheduler */
   osKernelStart();
 
@@ -394,7 +397,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -527,6 +529,51 @@ static void MX_ADC1_Init(void)
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
+
+}
+
+/**
+  * @brief DAC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_DAC1_Init(void)
+{
+
+  /* USER CODE BEGIN DAC1_Init 0 */
+
+  /* USER CODE END DAC1_Init 0 */
+
+  DAC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN DAC1_Init 1 */
+
+  /* USER CODE END DAC1_Init 1 */
+  /** DAC Initialization
+  */
+  hdac1.Instance = DAC1;
+  if (HAL_DAC_Init(&hdac1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** DAC channel OUT1 config
+  */
+  sConfig.DAC_HighFrequency = DAC_HIGH_FREQUENCY_INTERFACE_MODE_AUTOMATIC;
+  sConfig.DAC_DMADoubleDataMode = DISABLE;
+  sConfig.DAC_SignedFormat = DISABLE;
+  sConfig.DAC_SampleAndHold = DAC_SAMPLEANDHOLD_DISABLE;
+  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+  sConfig.DAC_Trigger2 = DAC_TRIGGER_NONE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+  sConfig.DAC_ConnectOnChipPeripheral = DAC_CHIPCONNECT_EXTERNAL;
+  sConfig.DAC_UserTrimming = DAC_TRIMMING_FACTORY;
+  if (HAL_DAC_ConfigChannel(&hdac1, &sConfig, DAC_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN DAC1_Init 2 */
+
+  /* USER CODE END DAC1_Init 2 */
 
 }
 
@@ -753,13 +800,13 @@ static void MX_GPIO_Init(void)
 //buffer is half full
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc){
 //    printf("Buffer is half full.\r\n");
-    DataProcessor_CheckThreshold(adc_buf, 0, (ADC_BUF_LEN/2)-1);
+    DataProcessor_AverageData(adc_buf, 0, (ADC_BUF_LEN/2)-1);
 }
 
 //buffer is full
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
     printf("Buffer is full. Last value: %i\r\n", adc_buf[ADC_BUF_LEN-1]);
-    DataProcessor_CheckThreshold(adc_buf, (ADC_BUF_LEN/2)-1, ADC_BUF_LEN-1);
+    DataProcessor_AverageData(adc_buf, (ADC_BUF_LEN/2)-1, ADC_BUF_LEN-1);
 }
 /* USER CODE END 4 */
 
