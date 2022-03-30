@@ -11,5 +11,4 @@
 #define BASE_VELOCITY_DELAY 35 // TODO: Set this to 15 again
 
 int DataProcessor_CheckThreshold(uint16_t half_buffer[4096], int startIndex, int stopIndex);
-int DataProcessor_AverageData(uint16_t half_buffer[4096], int startIndex, int stopIndex);
 #endif //PROSTHETICCONTROLSSTM32_DATA_PROCESSOR_H

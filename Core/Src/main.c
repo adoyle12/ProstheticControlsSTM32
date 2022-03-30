@@ -42,7 +42,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define ADC_BUF_LEN 1024
+#define ADC_BUF_LEN 4096
 #define HAL_UART_MODULE_ENABLED
 
 #define SERVO_Motor1    0
@@ -339,7 +339,7 @@ int main(void)
     HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);     //Set up DMA transmission, talk about the data transfer of serial port 1 to recvive_buff,
     HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_BUF_LEN);
     HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
-    printf("SUCCESSFUL PRINTF \r\n");
+    printf("SUCCESSFUL PRINTF REV1 \r\n");
 
 
     //Does buffer already exist?
@@ -799,14 +799,14 @@ static void MX_GPIO_Init(void)
 
 //buffer is half full
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc){
-//    printf("Buffer is half full.\r\n");
-    DataProcessor_AverageData(adc_buf, 0, (ADC_BUF_LEN/2)-1);
+    //printf("Buffer is half full.\r\n");
+    DataProcessor_CheckThreshold(adc_buf, 0, (ADC_BUF_LEN/2)-1);
 }
 
 //buffer is full
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
     printf("Buffer is full. Last value: %i\r\n", adc_buf[ADC_BUF_LEN-1]);
-    DataProcessor_AverageData(adc_buf, (ADC_BUF_LEN/2)-1, ADC_BUF_LEN-1);
+    DataProcessor_CheckThreshold(adc_buf, (ADC_BUF_LEN / 2) - 1, ADC_BUF_LEN - 1);
 }
 /* USER CODE END 4 */
 
