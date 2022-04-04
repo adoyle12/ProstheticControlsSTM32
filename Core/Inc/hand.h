@@ -2,9 +2,7 @@
 #define PROSTHETICCONTROLSSTM32_HAND_H
 
 #include <stdint.h>
-
-#define RELEASED_FINGER_POSITION 100
-#define CLENCHED_FINGER_POSITION 10
+#include "config.h"
 
 extern int FingerPositions[5];
 extern int FingerClosedPositions[5];

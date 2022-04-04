@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "config.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -294,7 +295,6 @@ uint8_t receive_buff[255];
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -332,6 +332,7 @@ int main(void)
     SERVO_Init(5);
 
     CommandHandler_Initialize();
+    CalculateThresholds(CLENCHED_VOLTAGE, RESTING_VOLTAGE);
     __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
     HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);     //Set up DMA transmission, talk about the data transfer of serial port 1 to recvive_buff,
     HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_BUF_LEN);
