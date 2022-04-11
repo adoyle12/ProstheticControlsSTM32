@@ -1,4 +1,6 @@
 #include "config.h"
+#include "SERVO.h"
+#include "hand.h"
 
 //Calculates the 3 thresholds based on peak clenched voltage and average resting voltage
 void CalculateThresholds(int clenchedVoltage, int restingVoltage){
@@ -7,6 +9,22 @@ void CalculateThresholds(int clenchedVoltage, int restingVoltage){
     maxThreshold = (clenchedVoltage-restingVoltage) * 4096 / 3.3 * 0.8;
 }
 
-void CalculateServoPulses(){
+int CalculateMaxServoPulse()
+{
+    int MaxPulse = 0;
+    for (int i = 0; i < SERVO_NUM; i++)
+    {
+        if (SERVO_Get_MaxPulse(i) > MaxPulse)
+        {
+            MaxPulse = SERVO_Get_MaxPulse(i);
+        }
+    }
+    StartPosition = SERVO_Get_MinPulse(0);
 
+    for (int i = 0; i < 5; ++i)
+    {
+        FingerPositions[i] = StartPosition;
+    }
+
+    return MaxPulse;
 }

@@ -25,11 +25,10 @@ extern TIM_HandleTypeDef htim2;
 
 typedef struct
 {
-	TIM_TypeDef*   TIM_Instance;
+    TIM_HandleTypeDef*   TIM_Instance;
 	uint32_t*      TIM_CCRx;
 	uint32_t       PWM_TIM_CH;
-	float          MinPulse;
-	float          MaxPulse;
+	float          DegreesToMove;
 }SERVO_CfgType;
 
 

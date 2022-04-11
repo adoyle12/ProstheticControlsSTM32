@@ -3,18 +3,21 @@
 #include <stdio.h>
 #include "hand.h"
 #include "SERVO.h"
+#include "config.h"
 
 int DataProcessor_CheckThreshold(uint16_t* half_buffer, int startIndex, int stopIndex){
+    int MaxHandPulse = CalculateMaxServoPulse();
+
     while (startIndex < stopIndex){ // Iterate through half of buffer
         int hasMoved = 0; // Used to delay only after a movement
         if(half_buffer[startIndex] >= maxThreshold){ // Clench
-            if(FingerPositions[2] < SERVO_Get_MaxPulse(2)){ // Finger that clenches the farthest
+            if(FingerPositions[2] < MaxHandPulse){ // Finger that clenches the farthest
                 Hand_Move(FingerPositions[2] + 1, (int[5]) {0, 1, 2, 3, 4}, 5);
                 HAL_Delay(5);
 //                    printf("%i passed upper threshold of %i. Clenching... \r\n", half_buffer[startIndex], UPPER_THRESHOLD);
             }
         } else if(half_buffer[startIndex] >= middleThreshold){ // Clench
-            if(FingerPositions[2] < SERVO_Get_MaxPulse(2)){ // Finger that clenches the farthest
+            if(FingerPositions[2] < MaxHandPulse){ // Finger that clenches the farthest
                 Hand_Move(FingerPositions[2] + 1, (int[5]) {0, 1, 2, 3, 4}, 5);
                 HAL_Delay(BASE_VELOCITY_DELAY);
 //                    printf("%i passed upper threshold of %i. Clenching... \r\n", half_buffer[startIndex], UPPER_THRESHOLD);
