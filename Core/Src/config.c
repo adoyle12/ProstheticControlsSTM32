@@ -2,6 +2,11 @@
 #include "SERVO.h"
 #include "hand.h"
 
+int minThreshold = 0;
+int middleThreshold = 0;
+int maxThreshold = 0;
+int StartPosition = 0;
+
 //Calculates the 3 thresholds based on peak clenched voltage and average resting voltage
 void CalculateThresholds(int clenchedVoltage, int restingVoltage){
     minThreshold = restingVoltage * 4096 / 3.3 + 100;

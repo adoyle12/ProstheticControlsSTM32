@@ -10,13 +10,12 @@
 
 #define BASE_VELOCITY_DELAY 35
 
-static int FingerPositions[5];
-static int FingerClosedPositions[5];
+extern int FingerPositions[5];
 
-static int minThreshold;
-static int middleThreshold;
-static int maxThreshold;
-static int StartPosition;
+extern int minThreshold;
+extern int middleThreshold;
+extern int maxThreshold;
+extern int StartPosition;
 
 void CalculateThresholds(int clenchedVoltage, int restingVoltage);
 int CalculateMaxServoPulse();

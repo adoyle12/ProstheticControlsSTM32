@@ -43,7 +43,7 @@ const SERVO_CfgType SERVO_CfgParam[SERVO_NUM] =
     {
         &htim1,
         &TIM1->CCR4,
-        TIM_CHANNEL_1,
+        TIM_CHANNEL_4,
         72
     },
 
@@ -51,7 +51,7 @@ const SERVO_CfgType SERVO_CfgParam[SERVO_NUM] =
     {
         &htim2,
         &TIM2->CCR1,
-        TIM_CHANNEL_2,
+        TIM_CHANNEL_1,
         54
     }
 
