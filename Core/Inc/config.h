@@ -6,7 +6,7 @@
 #define STARTING_PULSE 0.7                  // Starting position for each servo in ms, set at 0.7 for a small buffer before end range
 
 #define CLENCHED_VOLTAGE 2.6
-#define RESTING_VOLTAGE 0.3
+#define RESTING_VOLTAGE 2
 
 #define BASE_VELOCITY_DELAY 35
 
