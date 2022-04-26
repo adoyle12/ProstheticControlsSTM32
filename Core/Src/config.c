@@ -9,7 +9,7 @@ float StartPosition = 0;
 
 //Calculates the 3 thresholds based on peak clenched voltage and average resting voltage
 void CalculateThresholds(float clenchedVoltage, float restingVoltage){
-    minThreshold = restingVoltage * 4096 / 3.3 + 100;
+    minThreshold = restingVoltage * 4096 / 3.3 + 200;
     middleThreshold = (clenchedVoltage-restingVoltage) * 4096 / 3.3 * 0.45;
     maxThreshold = (clenchedVoltage-restingVoltage) * 4096 / 3.3 * 0.7;
 }
