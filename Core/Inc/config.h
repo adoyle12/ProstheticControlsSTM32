@@ -6,18 +6,18 @@
 #define STARTING_PULSE 0.7                  // Starting position for each servo in ms, set at 0.7 for a small buffer before end range
 
 #define CLENCHED_VOLTAGE 2.6
-#define RESTING_VOLTAGE 2
+#define RESTING_VOLTAGE 0.9
 
 #define BASE_VELOCITY_DELAY 35
 
 extern int FingerPositions[5];
 
-extern int minThreshold;
-extern int middleThreshold;
-extern int maxThreshold;
-extern int StartPosition;
+extern float minThreshold;
+extern float middleThreshold;
+extern float maxThreshold;
+extern float StartPosition;
 
-void CalculateThresholds(int clenchedVoltage, int restingVoltage);
+void CalculateThresholds(float clenchedVoltage, float restingVoltage);
 int CalculateMaxServoPulse();
 
 #endif //PROSTHETICCONTROLSSTM32_CONFIG_H
