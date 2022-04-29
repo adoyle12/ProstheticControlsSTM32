@@ -11,7 +11,7 @@ float StartPosition = 0;
 void CalculateThresholds(float clenchedVoltage, float restingVoltage){
     minThreshold = restingVoltage * 4096 / 3.3 + 200;
     middleThreshold = (clenchedVoltage-restingVoltage) * 4096 / 3.3 * 0.45;
-    maxThreshold = (clenchedVoltage-restingVoltage) * 4096 / 3.3 * 0.7;
+    maxThreshold = (clenchedVoltage-restingVoltage) * 4096 / 3.3 * 0.9;
 }
 
 int CalculateMaxServoPulse()

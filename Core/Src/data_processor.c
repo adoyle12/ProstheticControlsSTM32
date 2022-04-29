@@ -13,13 +13,13 @@ int DataProcessor_CheckThreshold(uint16_t* half_buffer, int startIndex, int stop
         if(half_buffer[startIndex] >= maxThreshold){ // Clench
             if(FingerPositions[2] < MaxHandPulse){ // Finger that clenches the farthest
                 Hand_Move(FingerPositions[2] + 1, (int[5]) {0, 1, 2, 3, 4}, 5);
-                HAL_Delay(5);
+                HAL_Delay(HIGH_VELOCITY_DELAY);
 //                    /printf("%i passed max threshold of %f. Clenching... \r\n", half_buffer[startIndex], maxThreshold);
             }
         } else if(half_buffer[startIndex] >= middleThreshold){ // Clench
             if(FingerPositions[2] < MaxHandPulse){ // Finger that clenches the farthest
                 Hand_Move(FingerPositions[2] + 1, (int[5]) {0, 1, 2, 3, 4}, 5);
-                HAL_Delay(BASE_VELOCITY_DELAY);
+                HAL_Delay(MID_VELOCITY_DELAY);
 //                    printf("%i passed upper threshold of %f. Clenching... \r\n", half_buffer[startIndex], middleThreshold);
             }
         } else if(half_buffer[startIndex] < minThreshold){ // Release
@@ -28,7 +28,7 @@ int DataProcessor_CheckThreshold(uint16_t* half_buffer, int startIndex, int stop
                 Hand_Move(FingerPositions[0] - 1, (int[5]) {0, 1, 2, 3, 4}, 5);
 //                    printf("%i passed lower threshold of %f. Releasing... \r\n", half_buffer[startIndex], minThreshold);
             }
-            HAL_Delay(8); // TODO: Set to BASE_VELOCITY_DELAY
+            HAL_Delay(RELEASE_VELOCITY_DELAY);
         }
     }
     startIndex++;

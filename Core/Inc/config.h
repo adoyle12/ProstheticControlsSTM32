@@ -6,9 +6,11 @@
 #define STARTING_PULSE 0.7                  // Starting position for each servo in ms, set at 0.7 for a small buffer before end range
 
 #define CLENCHED_VOLTAGE 2.9
-#define RESTING_VOLTAGE 0.4
+#define RESTING_VOLTAGE 0.7
 
-#define BASE_VELOCITY_DELAY 35
+#define HIGH_VELOCITY_DELAY 3
+#define MID_VELOCITY_DELAY 8
+#define RELEASE_VELOCITY_DELAY 3
 
 extern int FingerPositions[5];
 

@@ -14,45 +14,45 @@
 
 const SERVO_CfgType SERVO_CfgParam[SERVO_NUM] =
 {
-	// Servo Motor 1 Configurations - Thumb - Move 54 degrees
+	// Servo Motor 1 Configurations - Pinky - Move 100 degrees
     {
 		&htim1,
 		&TIM1->CCR1,
 		TIM_CHANNEL_1,
-		54
+		100
 	},
 
-    // Servo Motor 2 Configurations - Index - Move 72 degrees
+    // Servo Motor 2 Configurations - Ring - Move 118 degrees
     {
         &htim1,
         &TIM1->CCR2,
         TIM_CHANNEL_2,
-        72
+        118
 
     },
 
-    // Servo Motor 3 Configurations - Middle - Move 117 degrees
+    // Servo Motor 3 Configurations - Middle - Move 141 degrees
     {
         &htim1,
         &TIM1->CCR3,
         TIM_CHANNEL_3,
-        117
+        141
     },
 
-    // Servo Motor 4 Configurations - Ring - Move 72 degrees
+    // Servo Motor 4 Configurations - Index - Move 118 degrees
     {
         &htim1,
         &TIM1->CCR4,
         TIM_CHANNEL_4,
-        72
+        118
     },
 
-    // Servo Motor 5 Configurations - Pinky - Move 54 degrees
+    // Servo Motor 5 Configurations - Thumb - Move 72 degrees
     {
         &htim2,
         &TIM2->CCR1,
         TIM_CHANNEL_1,
-        54
+        72
     }
 
 };

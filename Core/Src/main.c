@@ -42,7 +42,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define ADC_BUF_LEN 4096
+#define ADC_BUF_LEN 512
 #define HAL_UART_MODULE_ENABLED
 
 #define SERVO_Motor1    0
