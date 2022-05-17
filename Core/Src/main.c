@@ -42,7 +42,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define ADC_BUF_LEN 1024
+#define ADC_BUF_LEN 512
 #define HAL_UART_MODULE_ENABLED
 
 #define SERVO_Motor1    0
@@ -294,7 +294,6 @@ uint8_t receive_buff[255];
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -329,13 +328,14 @@ int main(void)
     SERVO_Init(2);
     SERVO_Init(3);
     SERVO_Init(4);
-    SERVO_Init(5);
+    //SERVO_Init(5);
 
     CommandHandler_Initialize();
+    CalculateThresholds(CLENCHED_VOLTAGE, RESTING_VOLTAGE);
     __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
     HAL_UART_Receive_DMA(&huart1, (uint8_t*)receive_buff, 255);     //Set up DMA transmission, talk about the data transfer of serial port 1 to recvive_buff,
     HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, ADC_BUF_LEN);
-    printf("SUCCESSFUL PRINTF \r\n");
+    printf("SUCCESSFUL PRINTF 2\r\n");
 
 
     //Does buffer already exist?
@@ -550,9 +550,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 900-1;
+  htim1.Init.Prescaler = 586-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 999;
+  htim1.Init.Period = 255;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -585,6 +585,12 @@ static void MX_TIM1_Init(void)
   }
   sConfigOC.Pulse = 0;
   if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
   {
     Error_Handler();
   }
@@ -631,9 +637,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 1000-1;
+  htim2.Init.Prescaler = 586-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 899;
+  htim2.Init.Period = 255;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
@@ -651,11 +657,6 @@ static void MX_TIM2_Init(void)
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigOC.Pulse = 0;
-  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
   {
     Error_Handler();
   }

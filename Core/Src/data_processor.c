@@ -2,33 +2,35 @@
 #include <stm32g4xx_hal.h>
 #include <stdio.h>
 #include "hand.h"
+#include "SERVO.h"
+#include "config.h"
 
-int DataProcessor_CheckThreshold(uint16_t half_buffer[4096], int startIndex, int stopIndex){
+int DataProcessor_CheckThreshold(uint16_t* half_buffer, int startIndex, int stopIndex){
+    int MaxHandPulse = CalculateMaxServoPulse();
+    SetFingersStartPosition();
+
     while (startIndex < stopIndex){ // Iterate through half of buffer
         int hasMoved = 0; // Used to delay only after a movement
-        if(half_buffer[startIndex] >= UPPER_THRESHOLD){ // Clench
-            for(int i = 0; i<5; i++){
-                if(FingerPositions[i] > CLENCHED_FINGER_POSITION){ // If this finger is not clenched, clench it
-                    hasMoved = 1;
-                    Hand_Move(FingerPositions[0] - 1, (int[1]) {i}, 1);
-//                    printf("%i passed upper threshold of %i. Clenching... \r\n", half_buffer[startIndex], UPPER_THRESHOLD);
-                }
+        if(half_buffer[startIndex] >= maxThreshold){ // Clench
+            if(FingerPositions[2] < MaxHandPulse){ // Finger that clenches the farthest
+                Hand_Move(FingerPositions[2] + 1, (int[5]) {0, 1, 2, 3, 4}, 5);
+                HAL_Delay(HIGH_VELOCITY_DELAY);
+//                    /printf("%i passed max threshold of %f. Clenching... \r\n", half_buffer[startIndex], maxThreshold);
             }
-            if(hasMoved == 1){ // Only delay if a finger has moved
-                HAL_Delay(BASE_VELOCITY_DELAY);
+        } else if(half_buffer[startIndex] >= middleThreshold){ // Clench
+            if(FingerPositions[2] < MaxHandPulse){ // Finger that clenches the farthest
+                Hand_Move(FingerPositions[2] + 1, (int[5]) {0, 1, 2, 3, 4}, 5);
+                HAL_Delay(MID_VELOCITY_DELAY);
+//                    printf("%i passed upper threshold of %f. Clenching... \r\n", half_buffer[startIndex], middleThreshold);
             }
-        } else if(half_buffer[startIndex] < LOWER_THRESHOLD){ // Release
-            for(int i = 0; i<5; i++){
-                if(FingerPositions[i] < RELEASED_FINGER_POSITION){ // If this finger is not released, release it
-                    hasMoved = 1;
-                    Hand_Move(FingerPositions[0] + 1, (int[1]) {i}, 1);
-//                    printf("%i passed lower threshold of %i. Releasing... \r\n", half_buffer[startIndex], LOWER_THRESHOLD);
-                }
+        } else if(half_buffer[startIndex] < minThreshold){ // Release
+            if(FingerPositions[0] > SERVO_Get_MinPulse(2)){ // If this finger is not released, release it
+                hasMoved = 1;
+                Hand_Move(FingerPositions[0] - 1, (int[5]) {0, 1, 2, 3, 4}, 5);
+//                    printf("%i passed lower threshold of %f. Releasing... \r\n", half_buffer[startIndex], minThreshold);
             }
-            if(hasMoved == 1){ // Only delay if a finger has moved
-                HAL_Delay(BASE_VELOCITY_DELAY);
-            }
+            HAL_Delay(RELEASE_VELOCITY_DELAY);
         }
-        startIndex++;
     }
+    startIndex++;
 }
