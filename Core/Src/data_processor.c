@@ -7,6 +7,7 @@
 
 int DataProcessor_CheckThreshold(uint16_t* half_buffer, int startIndex, int stopIndex){
     int MaxHandPulse = CalculateMaxServoPulse();
+    SetFingersStartPosition();
 
     while (startIndex < stopIndex){ // Iterate through half of buffer
         int hasMoved = 0; // Used to delay only after a movement

@@ -24,6 +24,13 @@ int CalculateMaxServoPulse()
             MaxPulse = SERVO_Get_MaxPulse(i);
         }
     }
+
+    return MaxPulse;
+}
+
+void SetFingersStartPosition()
+{
+    // All min pulses are the same so pick any
     StartPosition = SERVO_Get_MinPulse(0);
 
     for (int i = 0; i < 5; ++i)
@@ -31,5 +38,4 @@ int CalculateMaxServoPulse()
         FingerPositions[i] = StartPosition;
     }
 
-    return MaxPulse;
 }

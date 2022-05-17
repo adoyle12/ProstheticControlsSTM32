@@ -26,12 +26,9 @@ static SERVO_info gs_SERVO_info[SERVO_NUM] = {0};
 
 void SERVO_Init(uint16_t au16_SERVO_Instance)
 {
-    uint32_t ARR_Value = 255;
-    printf("ARR: %d\n", ARR_Value);
-
-    gs_SERVO_info[au16_SERVO_Instance].CCR_Min = (uint16_t) (ARR_Value * STARTING_PULSE/PWM_PERIOD);
+    gs_SERVO_info[au16_SERVO_Instance].CCR_Min = (uint16_t) (ARR_VALUE * STARTING_PULSE/PWM_PERIOD);
     float MaxPulse = (SERVO_CfgParam[au16_SERVO_Instance].DegreesToMove * WIDTH_PER_DEGREE) + STARTING_PULSE;
-    gs_SERVO_info[au16_SERVO_Instance].CCR_Max = (uint16_t) (ARR_Value * MaxPulse / PWM_PERIOD);
+    gs_SERVO_info[au16_SERVO_Instance].CCR_Max = (uint16_t) (ARR_VALUE * MaxPulse / PWM_PERIOD);
 	HAL_TIM_PWM_Start(SERVO_CfgParam[au16_SERVO_Instance].TIM_Instance, SERVO_CfgParam[au16_SERVO_Instance].PWM_TIM_CH);
     printf("PWM Started on Servo %d \r\n",au16_SERVO_Instance);
 }
